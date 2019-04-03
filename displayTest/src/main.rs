@@ -2,8 +2,14 @@
 #![no_main]
 #![feature(alloc_error_handler)]
 #![warn(clippy::all)]
+#![feature(alloc)]
 
+#[macro_use]
+extern crate alloc;
+
+//use alloc::fmt as fmt;
 use core::fmt::Write;
+
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout as AllocLayout;
 use core::panic::PanicInfo;
@@ -12,8 +18,10 @@ use stm32f7::stm32f7x6::{CorePeripherals, Peripherals};
 use stm32f7_discovery::{
     gpio::{GpioPort, OutputPin},
     init,
-    system_clock::{self, Hz},  touch, lcd::Color,
+    system_clock::{self, Hz},  touch, lcd::Color, i2c
 };
+
+
 
 #[entry]
 fn main() -> ! {
@@ -39,6 +47,8 @@ fn main() -> ! {
     let mut ethernet_mac = peripherals.ETHERNET_MAC;
     let mut ethernet_dma = peripherals.ETHERNET_DMA;
 
+    let i2c_3 = peripherals.I2C3;
+
     let gpio_a = GpioPort::new(peripherals.GPIOA);
     let gpio_b = GpioPort::new(peripherals.GPIOB);
     let gpio_c = GpioPort::new(peripherals.GPIOC);
@@ -50,12 +60,18 @@ fn main() -> ! {
     let gpio_i = GpioPort::new(peripherals.GPIOI);
     let gpio_j = GpioPort::new(peripherals.GPIOJ);
     let gpio_k = GpioPort::new(peripherals.GPIOK);
+
     let mut pins = init::pins(
         gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g, gpio_h, gpio_i, gpio_j, gpio_k,
     );
 
+     // i2c
+    //i2c::init_pins_and_clocks(rcc, &mut gpio);
+    let mut i2c_3 = i2c::init(i2c_3, &mut rcc);
+    touch::check_family_id(&mut i2c_3).unwrap();
+
     // configure the systick timer 20Hz (20 ticks per second)
-    init::init_systick(Hz(20), &mut systick, &rcc);
+    init::init_systick(Hz(100), &mut systick, &rcc);
     systick.enable_interrupt();
 
 
@@ -87,8 +103,11 @@ fn main() -> ! {
 
     // turn led on
     pins.led.set(true);
-    let mut count = 0;
+    let mut count: u32 = 0;
     let mut last_led_toggle = system_clock::ticks();
+
+    let mut last_click = 0;
+
     loop {
         let ticks = system_clock::ticks();
         // every 0.5 seconds (we have 20 ticks per second)
@@ -98,14 +117,33 @@ fn main() -> ! {
             
 
         }
-        let mut text1 = layer_1.text_writer();
+
+        // let mut text1 = layer_1.text_writer();
   
-        //let mut text2 = layer_2.text_writer();
+        let mut text2 = layer_2.text_writer();
 
-        text1.x_pos = 165;
-        text1.y_pos = 200;
+        text2.x_pos = 165;
+        text2.y_pos = 200;
 
-        
+        // let mut touches: Vec<(u16, u16)> = Vec::new();
+        // for touch in &touch::touches(&mut i2c_3).unwrap() {
+        //     touches.push((touch.x, touch.y));
+        // }
+
+
+        for touch in &touch::touches(&mut i2c_3).unwrap() {  
+            layer_1.print_point_color_at(touch.x as usize, touch.y as usize, black);
+            if ticks - last_click > 10{
+                count += 1;
+                last_click = ticks
+            }         
+
+        }
+
+      
+
+
+
 
         // text1.write_str("&lcd.layer_1()n\n\n\n\n");
         // text1.write_str("\n\n\n\n\n");
@@ -116,9 +154,9 @@ fn main() -> ! {
         // text1.write_str("\n\n\n\n\n");
         // text1.write_str("\n\n\n\n\n");
         // text1.write_str("\n\n\n\n");
-
-        text1.write_str("Count:");
-     
+      
+        
+ 
 
 
 
@@ -138,6 +176,11 @@ fn main() -> ! {
         }
 
 
+        // let bla = count.to_string();
+        // let string  = format!("Count {}", count);
+        // let haha = concat!("Count: ", bla);
+        // text2.write_str(haha);
+        text2.write_fmt(format_args!("Count: {}", count));
         // for c in arr.iter() {
         //     //let i1 = 124 + 5 * c;
         //     //let i2 = 356 - 5 * c;
