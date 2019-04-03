@@ -3,8 +3,7 @@
 #![feature(alloc_error_handler)]
 #![warn(clippy::all)]
 
-
-
+use core::fmt::Write;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout as AllocLayout;
 use core::panic::PanicInfo;
@@ -68,6 +67,7 @@ fn main() -> ! {
 
     let mut layer_1 = lcd.layer_1().unwrap();
     let mut layer_2 = lcd.layer_2().unwrap();
+    
     let bg_color = Color{red: 255,green: 0 ,blue: 0,alpha: 255};
     let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
     let green = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
@@ -87,7 +87,7 @@ fn main() -> ! {
 
     // turn led on
     pins.led.set(true);
-
+    let mut count = 0;
     let mut last_led_toggle = system_clock::ticks();
     loop {
         let ticks = system_clock::ticks();
@@ -98,33 +98,69 @@ fn main() -> ! {
             
 
         }
+        let mut text1 = layer_1.text_writer();
+  
+        //let mut text2 = layer_2.text_writer();
+
+        text1.x_pos = 165;
+        text1.y_pos = 200;
 
         
 
+        // text1.write_str("&lcd.layer_1()n\n\n\n\n");
+        // text1.write_str("\n\n\n\n\n");
 
-        for c in arr.iter() {
-            //let i1 = 124 + 5 * c;
-            //let i2 = 356 - 5 * c;
-            //let j1 = 10 + 5 * c;
-            //let j2 = 262 - 5 * c;
-            //for i in i1..i2 {
-            for i in 0..272 {
-                layer_2.print_point_color_at(*c, i, green);
-                //for j in j1..j2 {
-                //    layer_1.print_point_color_at(i, j, blue);
-                //}
+        // text1.write_str("\n\n\n\n\n");
+        // text1.write_str("\n\n\n\n\n");
+
+        // text1.write_str("\n\n\n\n\n");
+        // text1.write_str("\n\n\n\n\n");
+        // text1.write_str("\n\n\n\n");
+
+        text1.write_str("Count:");
+     
+
+
+
+        
+
+        for x in 0..480 {
+            for y in 0..272 {
+                if (x == 160 || x == 320) && (y >= 61 && y < 211) {
+                    layer_1.print_point_color_at(x, y, black);
+                                    
+                }
+                if (y == 61 || y == 211) && (x >= 160 && x < 320) {
+                    layer_1.print_point_color_at(x, y, black);
+                    
+                }
             }
         }
-        for c in arr2.iter() {
-            for i in 0..275 {
-                layer_1.print_point_color_at(i, *c, black);
-            }
-        }
-        for c in 53..72 {
-            for i in 78..172 {
-                layer_2.print_point_color_at(c, i, grey);
-            }
-        }
+
+
+        // for c in arr.iter() {
+        //     //let i1 = 124 + 5 * c;
+        //     //let i2 = 356 - 5 * c;
+        //     //let j1 = 10 + 5 * c;
+        //     //let j2 = 262 - 5 * c;
+        //     //for i in i1..i2 {
+        //     for i in 0..272 {
+        //         layer_2.print_point_color_at(*c, i, green);
+        //         //for j in j1..j2 {
+        //         //    layer_1.print_point_color_at(i, j, blue);
+        //         //}
+        //     }
+        // }
+        // for c in arr2.iter() {
+        //     for i in 0..275 {
+        //         layer_1.print_point_color_at(i, *c, black);
+        //     }
+        // }
+        // for c in 53..72 {
+        //     for i in 78..172 {
+        //         layer_2.print_point_color_at(c, i, grey);
+        //     }
+        // }
 
     }
 }
