@@ -89,6 +89,7 @@ fn main() -> ! {
     let green = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
     let black = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
     let grey = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
+    let yellow = Color{red: 255, green: 255, blue: 0, alpha: 255};
 
     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
     layer_1.clear();
@@ -156,12 +157,21 @@ fn main() -> ! {
         // text1.write_str("\n\n\n\n");
       
         
- 
+        let max_x = 480;
+        let max_y = 270;
+        let centre_x = max_x / 2;
+        let centre_y = max_y / 2;
 
-
+        for x in 100..400 {
+            for y in 50..240 {
+                if dist(x, y, centre_x, centre_y) < 50 {
+                    layer_1.print_point_color_at(x, y, yellow);
+                }
+            }
+        }
 
         
-
+/**
         for x in 0..480 {
             for y in 0..272 {
                 if (x == 160 || x == 320) && (y >= 61 && y < 211) {
@@ -174,7 +184,7 @@ fn main() -> ! {
                 }
             }
         }
-
+ */
 
         // let bla = count.to_string();
         // let string  = format!("Count {}", count);
@@ -206,6 +216,32 @@ fn main() -> ! {
         // }
 
     }
+}
+
+fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
+    let mut d_x = 0;
+    let mut d_y = 0;
+    if px > qx {
+        d_x = px - qx;
+    }
+    else {
+        d_x = qx - px;
+    }
+    if py > qy {
+        d_y = py - qy; 
+    }
+    else {
+        d_y = qy - py;
+    }
+    let t = d_x * d_x + d_y * d_y;
+    //my_sqrt(t)
+    for i in 0..t {
+        if i * i >= t {
+            return i;
+        }
+            
+    } 
+    0
 }
 
 #[global_allocator]
