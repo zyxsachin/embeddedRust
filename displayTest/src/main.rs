@@ -1,19 +1,20 @@
 #![no_std]
 #![no_main]
 #![feature(alloc_error_handler)]
+#![warn(clippy::all)]
 
-use stm32f7_discovery::{
-    gpio::{GpioPort, OutputPin},
-    init,
-    system_clock::{self, Hz},  touch, lcd::Color,
-};
+
 
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout as AllocLayout;
 use core::panic::PanicInfo;
 use cortex_m_rt::{entry, exception};
 use stm32f7::stm32f7x6::{CorePeripherals, Peripherals};
-
+use stm32f7_discovery::{
+    gpio::{GpioPort, OutputPin},
+    init,
+    system_clock::{self, Hz},  touch, lcd::Color,
+};
 
 #[entry]
 fn main() -> ! {
@@ -58,6 +59,8 @@ fn main() -> ! {
     init::init_systick(Hz(20), &mut systick, &rcc);
     systick.enable_interrupt();
 
+
+    init::init_sdram(&mut rcc, &mut fmc);
     let mut lcd = init::init_lcd(&mut ltdc, &mut rcc);
     
     pins.display_enable.set(true);
@@ -89,11 +92,15 @@ fn main() -> ! {
     loop {
         let ticks = system_clock::ticks();
         // every 0.5 seconds (we have 20 ticks per second)
-        if ticks - last_led_toggle >= 100 {
+        if ticks - last_led_toggle >= 10 {
             pins.led.toggle();
             last_led_toggle = ticks;
+            
+
         }
+
         
+
 
         for c in arr.iter() {
             //let i1 = 124 + 5 * c;
@@ -118,8 +125,7 @@ fn main() -> ! {
                 layer_2.print_point_color_at(c, i, grey);
             }
         }
-        //layer_1.clear();
-        //layer_2.clear();
+
     }
 }
 
@@ -139,7 +145,7 @@ fn rust_oom(_: AllocLayout) -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    /*use core::fmt::Write;
+    use core::fmt::Write;
     use cortex_m::asm;
     use cortex_m_semihosting::hio;
 
@@ -149,6 +155,6 @@ fn panic(info: &PanicInfo) -> ! {
 
     // OK to fire a breakpoint here because we know the microcontroller is connected to a debugger
     asm::bkpt();
-    */
+
     loop {}
 }
