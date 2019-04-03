@@ -4,8 +4,19 @@
 #![warn(clippy::all)]
 #![feature(alloc)]
 
+#![feature(generators, generator_trait)]
+#![feature(futures_api)]
+#![feature(arbitrary_self_types)]
+#![feature(async_await)]
+
 #[macro_use]
 extern crate alloc;
+
+use alloc::sync::Arc;
+use alloc::vec::Vec;
+use stm32f7_discovery::future_mutex;
+
+
 
 //use alloc::fmt as fmt;
 use core::fmt::Write;
@@ -71,7 +82,7 @@ fn main() -> ! {
     touch::check_family_id(&mut i2c_3).unwrap();
 
     // configure the systick timer 20Hz (20 ticks per second)
-    init::init_systick(Hz(100), &mut systick, &rcc);
+    init::init_systick(Hz(10000), &mut systick, &rcc);
     systick.enable_interrupt();
 
 
@@ -88,7 +99,10 @@ fn main() -> ! {
     let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
     let green = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
     let black = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
+    let white = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
     let grey = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
+    let yellow = Color{red: 255, green: 255, blue: 0, alpha: 255};
+    let red = Color{red: 255, green: 0, blue: 0, alpha: 255};
 
     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
     layer_1.clear();
@@ -107,16 +121,45 @@ fn main() -> ! {
     let mut last_led_toggle = system_clock::ticks();
 
     let mut last_click = 0;
+    let mut clicked = 0;
+    let mut clicked_ticks = 0;
+    let mut clicker_color = sky_blue;
 
     loop {
         let ticks = system_clock::ticks();
+        clicker_color = sky_blue;
+        // if clicked == 1 {
+        //     if clicked_ticks < 100 {
+        //         clicker_color = white;
+        //         clicked_ticks += 1;
+        //     } 
+        //     else {
+        //         clicker_color = sky_blue;
+        //         clicked = 0;
+        //         clicked_ticks = 0;
+        //     }
+        // }
+        
+        for touch in &touch::touches(&mut i2c_3).unwrap() {  
+            //layer_1.print_point_color_at(touch.x as usize, touch.y as usize, black);
+            if clicked == 0 && touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 && ticks - last_click > 5000{
+                count += 1;
+                last_click = ticks;
+                // clicked = 1;
+                clicker_color = red;
+                
+            }
+            
+        }
+
+      
         // every 0.5 seconds (we have 20 ticks per second)
-        if ticks - last_led_toggle >= 10 {
-            pins.led.toggle();
-            last_led_toggle = ticks;
+        // if ticks - last_led_toggle >= 10 {
+        //     pins.led.toggle();
+        //     last_led_toggle = ticks;
             
 
-        }
+        // }
 
         // let mut text1 = layer_1.text_writer();
   
@@ -131,14 +174,7 @@ fn main() -> ! {
         // }
 
 
-        for touch in &touch::touches(&mut i2c_3).unwrap() {  
-            layer_1.print_point_color_at(touch.x as usize, touch.y as usize, black);
-            if ticks - last_click > 10{
-                count += 1;
-                last_click = ticks
-            }         
-
-        }
+  
 
       
 
@@ -164,17 +200,22 @@ fn main() -> ! {
 
         for x in 0..480 {
             for y in 0..272 {
-                if (x == 160 || x == 320) && (y >= 61 && y < 211) {
+                if (x == 160 || x == 320) && (y >= 61 && y <= 211) {
                     layer_1.print_point_color_at(x, y, black);
                                     
                 }
-                if (y == 61 || y == 211) && (x >= 160 && x < 320) {
+                if (y == 61 || y == 211) && (x >= 160 && x <= 320) {
                     layer_1.print_point_color_at(x, y, black);
                     
                 }
+
+                if (x > 160 && x < 320) && (y > 61 && y < 211) {
+                    layer_1.print_point_color_at(x, y, clicker_color);
+                                    
+                }
+
             }
         }
-
 
         // let bla = count.to_string();
         // let string  = format!("Count {}", count);
@@ -207,6 +248,7 @@ fn main() -> ! {
 
     }
 }
+
 
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
