@@ -201,12 +201,21 @@ fn main() -> ! {
         // text1.write_str("\n\n\n\n");
       
         
- 
+        let max_x = 480;
+        let max_y = 270;
+        let centre_x = max_x / 2;
+        let centre_y = max_y / 2;
 
-
+        for x in 100..400 {
+            for y in 50..240 {
+                if dist(x, y, centre_x, centre_y) < 50 {
+                    layer_1.print_point_color_at(x, y, yellow);
+                }
+            }
+        }
 
         
-
+/**
         for x in 0..480 {
             for y in 0..272 {
                 if (x == 160 || x == 320) && (y >= 61 && y <= 211) {
@@ -225,7 +234,7 @@ fn main() -> ! {
 
             }
         }
-
+ */
 
         text2.write_fmt(format_args!("Energy: {}", count));
 
@@ -261,6 +270,31 @@ fn main() -> ! {
     }
 }
 
+fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
+    let mut d_x = 0;
+    let mut d_y = 0;
+    if px > qx {
+        d_x = px - qx;
+    }
+    else {
+        d_x = qx - px;
+    }
+    if py > qy {
+        d_y = py - qy; 
+    }
+    else {
+        d_y = qy - py;
+    }
+    let t = d_x * d_x + d_y * d_y;
+    //my_sqrt(t)
+    for i in 0..t {
+        if i * i >= t {
+            return i;
+        }
+            
+    } 
+    0
+}
 
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
