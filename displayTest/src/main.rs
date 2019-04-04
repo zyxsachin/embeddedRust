@@ -12,6 +12,8 @@
 #[macro_use]
 extern crate alloc;
 
+mod clicker;
+
 use alloc::sync::Arc;
 use alloc::vec::Vec;
 use stm32f7_discovery::future_mutex;
@@ -76,13 +78,18 @@ fn main() -> ! {
         gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g, gpio_h, gpio_i, gpio_j, gpio_k,
     );
 
+
+    let mut clicker = clicker::Clicker::new();
+
      // i2c
     //i2c::init_pins_and_clocks(rcc, &mut gpio);
     let mut i2c_3 = i2c::init(i2c_3, &mut rcc);
     touch::check_family_id(&mut i2c_3).unwrap();
 
+    let hertz = 100;
+
     // configure the systick timer 20Hz (20 ticks per second)
-    init::init_systick(Hz(10000), &mut systick, &rcc);
+    init::init_systick(Hz(hertz), &mut systick, &rcc);
     systick.enable_interrupt();
 
 
@@ -110,157 +117,126 @@ fn main() -> ! {
     lcd.set_background_color(sky_blue);
 
 
-    let arr = [24,25,49,50,74,75,99,100,124,125,149,150,174,175,199,200,224,225,249,250,274,275];
-    //let arr = [200,210,220];
-    //let arr = [10,20,30];
-    let arr2 = [24,25,49,50,74,75,99,100,124,125,149,150,174,175,199,200,224,225,249,250];
-
     // turn led on
     pins.led.set(true);
-    let mut count: u32 = 0;
     let mut last_led_toggle = system_clock::ticks();
 
     
-    let mut clicked = 0;
     let mut clicked_ticks = 0;
     let mut clicker_color = sky_blue;
+      
+        
+    let max_x = 480;
+    let max_y = 272;
+    let centre_x = max_x / 2;
+    let centre_y = max_y / 2;
+    let radius = 50;
 
-    let mut j_per_click = 1;
+    for x in centre_x-radius..centre_x+radius {
+        for y in centre_y-radius..centre_y+radius {
+            if dist(x, y, centre_x, centre_y) == radius {
+                layer_1.print_point_color_at(x, y, yellow);
+            }
+        }
+    }
 
-    let mut watt = 0;
-
-    let mut last_click = 0;
-    let mut last_touch_pos = (0, 0);
+    let mut joule = 0;
+    let mut old_tick = system_clock::ticks();;
 
     loop {
         let ticks = system_clock::ticks();
-        clicker_color = sky_blue;
-        // if clicked == 1 {
-        //     if clicked_ticks < 100 {
-        //         clicker_color = white;
-        //         clicked_ticks += 1;
-        //     } 
-        //     else {
-        //         clicker_color = sky_blue;
-        //         clicked = 0;
-        //         clicked_ticks = 0;
-        //     }
-        // }
         
-        for touch in &touch::touches(&mut i2c_3).unwrap() {  
-            //layer_1.print_point_color_at(touch.x as usize, touch.y as usize, black);
-            if clicked == 0 && touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 && ticks - last_click > 5000{
-                if (last_touch_pos.0 - )
-                count += j_per_click;
-                last_click = ticks;
-                // clicked = 1;
-                last_touch_pos = (touch.x_pos, touch.y_pos);
-                clicker_color = red;
-                
-            }
-            
+        if ticks - old_tick >= 100 {
+            old_tick = ticks;
+            clicker.increment();
+
         }
+        
+        clicker_color = sky_blue;
+
+        if touch::touches(&mut i2c_3).unwrap().len() == 0 {
+            clicker.reset_clicks();
+          
+        }
+        else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
+            for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                clicker.check_clicked((touch.x, touch.y));              
+            }
+        }
+      
+ 
+      
 
       
-        // every 0.5 seconds (we have 20 ticks per second)
-        // if ticks - last_led_toggle >= 10 {
-        //     pins.led.toggle();
-        //     last_led_toggle = ticks;
-            
-
-        // }
-
+  
         // let mut text1 = layer_1.text_writer();
   
         let mut text2 = layer_2.text_writer();
 
-        text2.x_pos = 165;
+
+        text2.x_pos = 0;
+        //text2.x_pos = 0;
         text2.y_pos = 200;
+        let mut joule = clicker.get_joule();
+        let watt = clicker.get_watt();
+        let offset = "                      ";
+        text2.write_fmt(format_args!("{}Joule: {} J", offset, joule));
 
-        // let mut touches: Vec<(u16, u16)> = Vec::new();
-        // for touch in &touch::touches(&mut i2c_3).unwrap() {
-        //     touches.push((touch.x, touch.y));
-        // }
-
-
-  
-
-      
-
-
-
-
-        // text1.write_str("&lcd.layer_1()n\n\n\n\n");
-        // text1.write_str("\n\n\n\n\n");
-
-        // text1.write_str("\n\n\n\n\n");
-        // text1.write_str("\n\n\n\n\n");
-
-        // text1.write_str("\n\n\n\n\n");
-        // text1.write_str("\n\n\n\n\n");
-        // text1.write_str("\n\n\n\n");
-      
-        
- 
-
-
+        text2.write_fmt(format_args!("\n{}Watt:  {} W", offset, watt));
+     
 
         
 
-        for x in 0..480 {
-            for y in 0..272 {
-                if (x == 160 || x == 320) && (y >= 61 && y <= 211) {
-                    layer_1.print_point_color_at(x, y, black);
+        // for x in 0..480 {
+        //     for y in 0..272 {
+        //         if (x == 160 || x == 320) && (y >= 61 && y <= 211) {
+        //             layer_1.print_point_color_at(x, y, black);
                                     
-                }
-                if (y == 61 || y == 211) && (x >= 160 && x <= 320) {
-                    layer_1.print_point_color_at(x, y, black);
+        //         }
+        //         if (y == 61 || y == 211) && (x >= 160 && x <= 320) {
+        //             layer_1.print_point_color_at(x, y, black);
                     
-                }
+        //         }
 
-                if (x > 160 && x < 320) && (y > 61 && y < 211) {
-                    layer_1.print_point_color_at(x, y, clicker_color);
+        //         if (x > 160 && x < 320) && (y > 61 && y < 211) {
+        //             layer_1.print_point_color_at(x, y, clicker_color);
                                     
-                }
+        //         }
 
-            }
-        }
-
-
-        text2.write_fmt(format_args!("Energy: {}", count));
-
-        // let bla = count.to_string();
-        // let string  = format!("Count {}", count);
-        // let haha = concat!("Count: ", bla);
-        // text2.write_str(haha);
-
-        // for c in arr.iter() {
-        //     //let i1 = 124 + 5 * c;
-        //     //let i2 = 356 - 5 * c;
-        //     //let j1 = 10 + 5 * c;
-        //     //let j2 = 262 - 5 * c;
-        //     //for i in i1..i2 {
-        //     for i in 0..272 {
-        //         layer_2.print_point_color_at(*c, i, green);
-        //         //for j in j1..j2 {
-        //         //    layer_1.print_point_color_at(i, j, blue);
-        //         //}
         //     }
         // }
-        // for c in arr2.iter() {
-        //     for i in 0..275 {
-        //         layer_1.print_point_color_at(i, *c, black);
-        //     }
-        // }
-        // for c in 53..72 {
-        //     for i in 78..172 {
-        //         layer_2.print_point_color_at(c, i, grey);
-        //     }
-        // }
+
+
+        
 
     }
 }
 
+fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
+    let mut d_x = 0;
+    let mut d_y = 0;
+    if px > qx {
+        d_x = px - qx;
+    }
+    else {
+        d_x = qx - px;
+    }
+    if py > qy {
+        d_y = py - qy; 
+    }
+    else {
+        d_y = qy - py;
+    }
+    let t = d_x * d_x + d_y * d_y;
+    //my_sqrt(t)
+    for i in 0..t {
+        if i * i >= t {
+            return i;
+        }
+            
+    } 
+    0
+}
 
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
