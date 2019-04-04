@@ -120,10 +120,17 @@ fn main() -> ! {
     let mut count: u32 = 0;
     let mut last_led_toggle = system_clock::ticks();
 
-    let mut last_click = 0;
+    
     let mut clicked = 0;
     let mut clicked_ticks = 0;
     let mut clicker_color = sky_blue;
+
+    let mut j_per_click = 1;
+
+    let mut watt = 0;
+
+    let mut last_click = 0;
+    let mut last_touch_pos = (0, 0);
 
     loop {
         let ticks = system_clock::ticks();
@@ -143,9 +150,11 @@ fn main() -> ! {
         for touch in &touch::touches(&mut i2c_3).unwrap() {  
             //layer_1.print_point_color_at(touch.x as usize, touch.y as usize, black);
             if clicked == 0 && touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 && ticks - last_click > 5000{
-                count += 1;
+                if (last_touch_pos.0 - )
+                count += j_per_click;
                 last_click = ticks;
                 // clicked = 1;
+                last_touch_pos = (touch.x_pos, touch.y_pos);
                 clicker_color = red;
                 
             }
@@ -217,11 +226,14 @@ fn main() -> ! {
             }
         }
 
+
+        text2.write_fmt(format_args!("Energy: {}", count));
+
         // let bla = count.to_string();
         // let string  = format!("Count {}", count);
         // let haha = concat!("Count: ", bla);
         // text2.write_str(haha);
-        text2.write_fmt(format_args!("Count: {}", count));
+
         // for c in arr.iter() {
         //     //let i1 = 124 + 5 * c;
         //     //let i2 = 356 - 5 * c;
