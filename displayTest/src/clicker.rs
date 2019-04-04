@@ -1,6 +1,3 @@
-#![no_std]
-#![no_main]
-#![feature(alloc_error_handler)]
 #![warn(clippy::all)]
 
 pub struct Clicker {
@@ -47,7 +44,12 @@ impl Clicker {
         self.clicked = false;
     }
 
-    pub fn check_clicked(&mut self, touch: (u16, u16)) { 
+    pub fn energy_tick(&mut self) {
+        self.joule += self.j_per_click;
+        self.clicked = true;
+    }
+
+    pub fn check_mode0_clicked(&mut self, touch: (u16, u16)) -> i8 { 
         
         let max_x = 480;
         let max_y = 272;
@@ -58,15 +60,13 @@ impl Clicker {
         if !self.clicked && dist(touch.0 as usize, touch.1 as usize, centre_x, centre_y) < radius {
 //touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 {// && ticks - last_click > 50{
             if dist(touch.0 as usize, touch.1 as usize, self.last_touch_pos.0 as usize, self.last_touch_pos.1 as usize) > 10 {
-                self.joule += self.j_per_click;
-                self.clicked = true;
+                return 0;
             }
             
         
-            self.last_touch_pos = (touch.0, touch.1);
-        
-        
+            self.last_touch_pos = (touch.0, touch.1);            
         }
+        -1
     }
 
     pub fn get_joule(&mut self) -> u32 {
@@ -79,8 +79,8 @@ impl Clicker {
 }
 
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
-    let mut d_x = 0;
-    let mut d_y = 0;
+    let d_x;
+    let d_y;
     if px > qx {
         d_x = px - qx;
     }

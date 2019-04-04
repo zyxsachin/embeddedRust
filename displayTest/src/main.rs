@@ -4,15 +4,11 @@
 #![warn(clippy::all)]
 #![feature(alloc)]
 
-#![feature(generators, generator_trait)]
-#![feature(futures_api)]
-#![feature(arbitrary_self_types)]
-#![feature(async_await)]
-
 #[macro_use]
 extern crate alloc;
 
 mod clicker;
+mod draw;
 
 use alloc::sync::Arc;
 use alloc::vec::Vec;
@@ -132,57 +128,84 @@ fn main() -> ! {
     let centre_y = max_y / 2;
     let radius = 50;
 
-    for x in centre_x-radius..centre_x+radius {
-        for y in centre_y-radius..centre_y+radius {
-            if dist(x, y, centre_x, centre_y) == radius {
-                layer_1.print_point_color_at(x, y, yellow);
-            }
-        }
-    }
+    let mut mode = 0;
+    let mut mode_just_set = false;
 
-    let mut joule = 0;
+    let mut circle_reset = false;
+
+    draw::draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+    draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
+    draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
+    
+
+
+
     let mut old_tick = system_clock::ticks();;
 
     loop {
         let ticks = system_clock::ticks();
-        
-        if ticks - old_tick >= 100 {
-            old_tick = ticks;
-            clicker.increment();
 
-        }
-        
-        clicker_color = sky_blue;
-
-        if touch::touches(&mut i2c_3).unwrap().len() == 0 {
-            clicker.reset_clicks();
-          
-        }
-        else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
-            for touch in &touch::touches(&mut i2c_3).unwrap() {  
-                clicker.check_clicked((touch.x, touch.y));              
+        if mode == 0 {
+            if circle_reset {
+                draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
+                circle_reset = false;
             }
-        }
-      
+            if mode_just_set {
+                draw::draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+                mode_just_set = false;
+            }
+            if ticks - old_tick >= 100 {
+                old_tick = ticks;
+                clicker.increment();
+
+            }
+
+            if touch::touches(&mut i2c_3).unwrap().len() == 0 {
+                clicker.reset_clicks();
+                
+            }
+            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
+                for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                    let check_clicked = clicker.check_mode0_clicked((touch.x, touch.y));    
+                     
+                    if check_clicked == 0 {
+                        clicker.energy_tick();
+                        draw::color_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+                        circle_reset = true;
+                    }
+                }
+            }
  
-      
+            let joule = clicker.get_joule();
+            let watt = clicker.get_watt();
+            let offset = "                         ";
+            draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J\n{}Watt:  {} W", offset, joule, offset, watt));
+
+
+        }
+            clicker_color = sky_blue;
+
+
+        // else if mode == 1 {
+
+        // }
+            
+    
 
       
   
         // let mut text1 = layer_1.text_writer();
-  
-        let mut text2 = layer_2.text_writer();
+       
+        // let mut text2 = layer_2.text_writer();
 
 
-        text2.x_pos = 0;
+        // text2.x_pos = 0;
         //text2.x_pos = 0;
-        text2.y_pos = 200;
-        let mut joule = clicker.get_joule();
-        let watt = clicker.get_watt();
-        let offset = "                      ";
-        text2.write_fmt(format_args!("{}Joule: {} J", offset, joule));
+        // text2.y_pos = 200;
+        
+        // text2.write_fmt(format_args!("{}Joule: {} J", offset, joule));
 
-        text2.write_fmt(format_args!("\n{}Watt:  {} W", offset, watt));
+        // text2.write_fmt(format_args!("\n{}Watt:  {} W", offset, watt));
      
 
         
@@ -213,8 +236,8 @@ fn main() -> ! {
 }
 
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
-    let mut d_x = 0;
-    let mut d_y = 0;
+    let d_x;
+    let d_y;
     if px > qx {
         d_x = px - qx;
     }
