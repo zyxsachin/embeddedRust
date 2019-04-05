@@ -232,9 +232,9 @@ fn main() -> ! {
             }
 
 
-            draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
-            draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
-            draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
+            draw::write_string(&mut layer_2, 120, 125, format_args!("Solar"));
+            draw::write_string(&mut layer_2, 240, 125, format_args!("Wind"));
+            draw::write_string(&mut layer_2, 360, 125, format_args!("Coal"));
 
 
         }

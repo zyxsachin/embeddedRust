@@ -144,18 +144,27 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mu
     draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
 }
 
-pub fn draw_mode1(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>) {
+pub fn draw_mode1(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<FramebufferAl88>) {
     layer_1.clear();
     layer_2.clear();                
 
-    bmp_reader::draw_image(layer_1, "solar", 50, 20);
-    bmp_reader::draw_image(layer_1, "wind", 170, 20);
-    bmp_reader::draw_image(layer_1, "coal", 290, 20);
+    bmp_reader::draw_image(layer_1, "back1", 0, 0);
+    bmp_reader::draw_image(layer_1, "back2", 0, 144);
+
+
+    bmp_reader::draw_image(layer_1, "solar", 120, 20);
+    bmp_reader::draw_image(layer_1, "wind", 240, 20);
+    bmp_reader::draw_image(layer_1, "coal", 360, 20);
+
+    bmp_reader::draw_image(layer_1, "gas", 120, 140);
+    bmp_reader::draw_image(layer_1, "nuclear", 240, 140);
+    bmp_reader::draw_image(layer_1, "water", 360, 140);
+
 
     //draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);
     //draw_rectangle(&mut layer_1, 170, 20, 100, 100, black);
     //draw_rectangle(&mut layer_1, 290, 20, 100, 100, black);
     
-    draw_rectangle(&mut layer_1, 20, 170, 440, 50, black);
+    //draw_rectangle(&mut layer_1, 20, 170, 440, 50, black);
 
 }
