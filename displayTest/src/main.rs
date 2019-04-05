@@ -9,6 +9,7 @@ extern crate alloc;
 
 mod clicker;
 mod draw;
+mod bmp_reader;
 
 use alloc::sync::Arc;
 use alloc::vec::Vec;
@@ -121,7 +122,9 @@ fn main() -> ! {
     let mut clicked_ticks = 0;
     let mut clicker_color = sky_blue;
       
-        
+
+    bmp_reader::draw_example(&mut layer_1);
+
     let max_x = 480;
     let max_y = 272;
     let centre_x = max_x / 2;
