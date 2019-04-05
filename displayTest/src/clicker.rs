@@ -1,11 +1,14 @@
 #![warn(clippy::all)]
 
+use crate::powerplant;
+
 pub struct Clicker {
     joule: u32,
     clicked: bool,
     j_per_click: u32,
     watt: u32, 
     last_touch_pos: (u16, u16),
+    powerplant: powerplant::Powerplant,
 }
 
     // let mut joule: u32 = 0;
@@ -25,13 +28,14 @@ pub struct Clicker {
 
 impl Clicker {
     
-    pub fn new() -> Self {
+    pub fn new(pp: powerplant::Powerplant) -> Self {
         Clicker {
             joule: 0,
             clicked: false,
             j_per_click: 1,
             watt: 0,          
             last_touch_pos: (0, 0),
+            powerplant: pp,
         }
     }
 
@@ -49,6 +53,7 @@ impl Clicker {
         self.clicked = true;
     }
 
+    // Returns a bool to check if the central clicker was clicked and an int which indicates the mode
     pub fn check_mode0_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) { 
         
         let max_x = 480;
@@ -56,6 +61,14 @@ impl Clicker {
         let centre_x = max_x / 2;
         let centre_y = max_y / 2;
         let radius = 50;
+
+        let powerplant_x = 50;
+
+
+        let powerplant_y = 80;
+
+        let mode0_width = 100;
+        let mode0_height = 100;
 
         if !self.clicked && dist(touch.0 as usize, touch.1 as usize, centre_x, centre_y) < radius {
 //touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 {// && ticks - last_click > 50{
@@ -67,14 +80,23 @@ impl Clicker {
             self.last_touch_pos = (touch.0, touch.1);            
         }
 
+        else if !self.clicked && touch.1 > powerplant_y && touch.1 < powerplant_y + mode0_height 
+            &&  touch.0 > powerplant_x && touch.0 < powerplant_x + mode0_width {
+            return (false, 1);
+           
+        }
+
         // draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
         // draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
 
-        if touch.0 >= 50 && touch.0 <= 150 && touch.1 >= 80 && touch.1 <= 180 {
-            return (true, 0);
-        }
+
 
         (false, 0)
+    }
+
+    // Returns a bool to check if there were changes and an int which indicates the mode
+    pub fn check_mode1_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
+        (false, 1)
     }
 
     pub fn get_joule(&mut self) -> u32 {

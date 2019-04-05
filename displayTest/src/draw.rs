@@ -82,6 +82,8 @@ pub fn draw_rectangle(mut layer: &mut Layer<FramebufferArgb8888>, x_coord: usize
 
 
 pub fn color_circle(mut layer: &mut Layer<FramebufferArgb8888>, centre_x: usize, centre_y: usize, radius: usize, color: Color) {
+
+
     for x in centre_x-radius..centre_x+radius {
         for y in centre_y-radius..centre_y+radius {
             if dist(x, y, centre_x, centre_y) < radius {
@@ -98,6 +100,7 @@ pub fn write_string(mut layer: &mut Layer<FramebufferAl88>, x_coord: u32, y_coor
      text_layer.write_fmt(text);
 
 }
+
 
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
     let d_x;
@@ -123,4 +126,31 @@ fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
             
     } 
     0
+}
+
+pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>) {
+    let max_x = 480;
+    let max_y = 272;
+    let centre_x = max_x / 2;
+    let centre_y = max_y / 2;
+    let radius = 50;
+
+    layer_1.clear();
+    layer_2.clear();                
+    draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+    draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
+    draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
+}
+
+pub fn draw_mode1(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>) {
+    layer_1.clear();
+    layer_2.clear();                
+  
+    draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);
+    draw_rectangle(&mut layer_1, 170, 20, 100, 100, black);
+    draw_rectangle(&mut layer_1, 290, 20, 100, 100, black);
+    
+
+    draw_rectangle(&mut layer_1, 20, 170, 440, 50, black);
+
 }

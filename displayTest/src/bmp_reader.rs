@@ -1,13 +1,9 @@
 
 use stm32f7_discovery::{
-    lcd::FramebufferAl88,
     lcd::FramebufferArgb8888,
-    lcd::Lcd,
     lcd::Color,
     lcd::Layer,
-    lcd::TextWriter,
 };
-use core::fmt::Write;
 
 
 
@@ -18,6 +14,8 @@ pub struct Bmp {
 }
 
 pub const EXAMPLE: &[u8] = include_bytes!("../images/e2.bmp");
+pub const BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
+
 
 pub fn read_bmp(source : &[u8]) -> Bmp {
     let w = source[18] as usize;
@@ -33,23 +31,21 @@ pub fn read_bmp(source : &[u8]) -> Bmp {
 }
 
 //width must be a multiple of 4
-pub fn draw_bmp(mut layer: &mut Layer<FramebufferArgb8888>, mut layer2: &mut Layer<FramebufferAl88>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
+pub fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
     for i in 0..bmp.height {
         for j in 0..bmp.width { 
             layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
         }
     }
-    let mut text_layer = layer2.text_writer();
-     text_layer.x_pos = 50;
-     text_layer.y_pos = 50;
-    for i in 0..16 {
-             text_layer.write_fmt(format_args!("{},{},{}\n", bmp.color[i].red, bmp.color[i].green, bmp.color[i].blue));
-
-    }
-
 }
 
-pub fn draw_example(mut layer: &mut Layer<FramebufferArgb8888>,mut layer2: &mut Layer<FramebufferAl88>) {
-    let example = read_bmp(EXAMPLE);
-    draw_bmp(layer, layer2, &example, 10, 20)
+pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
+    if img == "example" {
+        let bmp = read_bmp(EXAMPLE);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "blitz" {
+        let bmp = read_bmp(BLITZ);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
 }
