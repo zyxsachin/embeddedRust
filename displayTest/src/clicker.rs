@@ -49,7 +49,7 @@ impl Clicker {
         self.clicked = true;
     }
 
-    pub fn check_mode0_clicked(&mut self, touch: (u16, u16)) -> i8 { 
+    pub fn check_mode0_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) { 
         
         let max_x = 480;
         let max_y = 272;
@@ -60,13 +60,21 @@ impl Clicker {
         if !self.clicked && dist(touch.0 as usize, touch.1 as usize, centre_x, centre_y) < radius {
 //touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 {// && ticks - last_click > 50{
             if dist(touch.0 as usize, touch.1 as usize, self.last_touch_pos.0 as usize, self.last_touch_pos.1 as usize) > 10 {
-                return 0;
+                return (true, 0);
             }
             
         
             self.last_touch_pos = (touch.0, touch.1);            
         }
-        -1
+
+        // draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
+        // draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
+
+        if touch.0 >= 50 && touch.0 <= 150 && touch.1 >= 80 && touch.1 <= 180 {
+            return (true, 0);
+        }
+
+        (false, 0)
     }
 
     pub fn get_joule(&mut self) -> u32 {

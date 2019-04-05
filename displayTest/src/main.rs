@@ -151,7 +151,12 @@ fn main() -> ! {
                 circle_reset = false;
             }
             if mode_just_set {
+                layer_1.clear();
+                layer_2.clear();
                 draw::draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+                draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
+                draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
+
                 mode_just_set = false;
             }
             if ticks - old_tick >= 100 {
@@ -167,8 +172,8 @@ fn main() -> ! {
             else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
                 for touch in &touch::touches(&mut i2c_3).unwrap() {  
                     let check_clicked = clicker.check_mode0_clicked((touch.x, touch.y));    
-                     
-                    if check_clicked == 0 {
+                    mode = check_clicked.1;
+                    if check_clicked.0 {
                         clicker.energy_tick();
                         draw::color_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
                         circle_reset = true;
@@ -182,6 +187,19 @@ fn main() -> ! {
             draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J\n{}Watt:  {} W", offset, joule, offset, watt));
 
 
+        }
+
+        else if mode == 1 {
+             if mode_just_set {
+                layer_1.clear();
+                layer_2.clear();
+
+                
+                mode_just_set = false;
+            }
+            else {
+
+            }
         }
             clicker_color = sky_blue;
 
