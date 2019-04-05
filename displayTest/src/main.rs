@@ -123,7 +123,7 @@ fn main() -> ! {
     let mut clicker_color = sky_blue;
       
 
-    bmp_reader::draw_example(&mut layer_1);
+    bmp_reader::draw_example(&mut layer_1, &mut layer_2);
 
     let max_x = 480;
     let max_y = 272;
