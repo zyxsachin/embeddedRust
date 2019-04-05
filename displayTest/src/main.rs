@@ -9,6 +9,7 @@ extern crate alloc;
 
 mod clicker;
 mod draw;
+mod powerplant;
 
 use alloc::sync::Arc;
 use alloc::vec::Vec;
@@ -27,10 +28,17 @@ use stm32f7::stm32f7x6::{CorePeripherals, Peripherals};
 use stm32f7_discovery::{
     gpio::{GpioPort, OutputPin},
     init,
-    system_clock::{self, Hz},  touch, lcd::Color, i2c
+    system_clock::{self, Hz},  touch, lcd::Color, i2c,
 };
 
 
+static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
+static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
+static black: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
+static white: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
+static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
+static yellow: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
+static red: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
 
 #[entry]
 fn main() -> ! {
@@ -74,8 +82,8 @@ fn main() -> ! {
         gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g, gpio_h, gpio_i, gpio_j, gpio_k,
     );
 
-
-    let mut clicker = clicker::Clicker::new();
+    let mut pp = powerplant::Powerplant::new();
+    let mut clicker = clicker::Clicker::new(pp);
 
      // i2c
     //i2c::init_pins_and_clocks(rcc, &mut gpio);
@@ -97,7 +105,7 @@ fn main() -> ! {
 
     let mut layer_1 = lcd.layer_1().unwrap();
     let mut layer_2 = lcd.layer_2().unwrap();
-    
+/*    
     let bg_color = Color{red: 255,green: 0 ,blue: 0,alpha: 255};
     let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
     let green = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
@@ -106,7 +114,7 @@ fn main() -> ! {
     let grey = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
     let yellow = Color{red: 255, green: 255, blue: 0, alpha: 255};
     let red = Color{red: 255, green: 0, blue: 0, alpha: 255};
-
+*/
     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
     layer_1.clear();
     layer_2.clear();
@@ -129,15 +137,11 @@ fn main() -> ! {
     let radius = 50;
 
     let mut mode = 0;
-    let mut mode_just_set = false;
+    let mut mode_just_set = true;
 
     let mut circle_reset = false;
 
-    draw::draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
-    draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
-    draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
-    
-
+    draw::draw_mode0(&mut layer_1, &mut layer_2);
 
 
     let mut old_tick = system_clock::ticks();;
@@ -153,9 +157,7 @@ fn main() -> ! {
             if mode_just_set {
                 layer_1.clear();
                 layer_2.clear();
-                draw::draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
-                draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
-                draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
+                draw::draw_mode0(&mut layer_1, &mut layer_2);
 
                 mode_just_set = false;
             }
@@ -166,9 +168,9 @@ fn main() -> ! {
             }
 
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {
-                clicker.reset_clicks();
-                
+                clicker.reset_clicks();             
             }
+
             else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
                 for touch in &touch::touches(&mut i2c_3).unwrap() {  
                     let check_clicked = clicker.check_mode0_clicked((touch.x, touch.y));    
@@ -183,23 +185,54 @@ fn main() -> ! {
  
             let joule = clicker.get_joule();
             let watt = clicker.get_watt();
-            let offset = "                         ";
-            draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J\n{}Watt:  {} W", offset, joule, offset, watt));
+            let line1_start = "      Buy Powerplant     ";
+            let line1_end = "    Buy Infrastructure";
+            let offset =      "                         ";
+            draw::write_string(&mut layer_2, 50, 190, format_args!("{}", ""));
+            draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", line1_start, joule, line1_end, offset, watt));
+            
 
+           
+
+            if mode != 0 {
+                mode_just_set = true;
+            }
 
         }
 
         else if mode == 1 {
-             if mode_just_set {
+            if mode_just_set {
                 layer_1.clear();
                 layer_2.clear();
-
+                draw::draw_mode1(&mut layer_1, &mut layer_2);
                 
                 mode_just_set = false;
             }
-            else {
 
+            if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
+                clicker.reset_clicks();
             }
+
+            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
+                for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                    let check_clicked = clicker.check_mode1_clicked((touch.x, touch.y));    
+                    mode = check_clicked.1;
+                    if check_clicked.0 {
+                       
+                    }
+                }
+            }
+
+            if mode != 1 {
+                mode_just_set = true;
+            }
+
+
+            draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
+            draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
+            draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
+
+
         }
             clicker_color = sky_blue;
 
@@ -252,6 +285,9 @@ fn main() -> ! {
 
     }
 }
+
+
+
 
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
     let d_x;
