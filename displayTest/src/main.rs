@@ -131,8 +131,6 @@ fn main() -> ! {
     let mut clicker_color = sky_blue;
       
 
-    bmp_reader::draw_example(&mut layer_1, &mut layer_2);
-
     let max_x = 480;
     let max_y = 272;
     let centre_x = max_x / 2;
@@ -155,13 +153,14 @@ fn main() -> ! {
         if mode == 0 {
             if circle_reset {
                 draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
+                bmp_reader::draw_blitz(&mut layer_1);
                 circle_reset = false;
             }
             if mode_just_set {
                 layer_1.clear();
                 layer_2.clear();
                 draw::draw_mode0(&mut layer_1, &mut layer_2);
-
+                bmp_reader::draw_blitz(&mut layer_1);
                 mode_just_set = false;
             }
             if ticks - old_tick >= 100 {
