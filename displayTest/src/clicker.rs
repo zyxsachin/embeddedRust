@@ -103,11 +103,11 @@ impl Clicker {
     // Returns a bool to check if there were changes and an int which indicates the mode
     pub fn check_mode1_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
 
-        let mode1_return_x = 20;
-        let mode1_return_y = 170;
+        let mode1_return_x = 0;
+        let mode1_return_y = 0;
 
-        let mode1_return_width = 440;
-        let mode1_return_height = 50;
+        let mode1_return_width = 100;
+        let mode1_return_height = 272;
 
         let mode1_width = 100;
         let mode1_height = 100;

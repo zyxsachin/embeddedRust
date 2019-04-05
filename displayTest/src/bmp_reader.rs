@@ -19,7 +19,12 @@ pub const BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
 pub const PLANTS: &[u8] = include_bytes!("../images/powerpflanzen.bmp");
 pub const COAL: &[u8] = include_bytes!("../images/coal.bmp");
 pub const SOLAR: &[u8] = include_bytes!("../images/sun.bmp");
+pub const WATER: &[u8] = include_bytes!("../images/damm.bmp");
+pub const NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
+pub const GAS: &[u8] = include_bytes!("../images/gas.bmp");
 pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
+pub const BACK1: &[u8] = include_bytes!("../images/back1.bmp");
+pub const BACK2: &[u8] = include_bytes!("../images/back2.bmp");
 
 
 
@@ -73,6 +78,26 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "wind" {
         let bmp = read_bmp(WIND);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "nuclear" {
+        let bmp = read_bmp(NUCLEAR);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "gas" {
+        let bmp = read_bmp(GAS);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "water" {
+        let bmp = read_bmp(WATER);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "back1" {
+        let bmp = read_bmp(BACK1);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "back2" {
+        let bmp = read_bmp(BACK2);
         draw_bmp(layer, &bmp, x_pos, y_pos);
     }
 }
