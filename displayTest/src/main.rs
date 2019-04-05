@@ -153,14 +153,14 @@ fn main() -> ! {
         if mode == 0 {
             if circle_reset {
                 draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
-                bmp_reader::draw_blitz(&mut layer_1);
+                bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 circle_reset = false;
             }
             if mode_just_set {
                 layer_1.clear();
                 layer_2.clear();
                 draw::draw_mode0(&mut layer_1, &mut layer_2);
-                bmp_reader::draw_blitz(&mut layer_1);
+                bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 mode_just_set = false;
             }
             if ticks - old_tick >= 100 {

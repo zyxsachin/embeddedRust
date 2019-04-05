@@ -1,13 +1,9 @@
 
 use stm32f7_discovery::{
-    lcd::FramebufferAl88,
     lcd::FramebufferArgb8888,
-    lcd::Lcd,
     lcd::Color,
     lcd::Layer,
-    lcd::TextWriter,
 };
-use core::fmt::Write;
 
 
 
@@ -35,7 +31,7 @@ pub fn read_bmp(source : &[u8]) -> Bmp {
 }
 
 //width must be a multiple of 4
-pub fn draw_bmp(mut layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
+pub fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
     for i in 0..bmp.height {
         for j in 0..bmp.width { 
             layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
@@ -43,7 +39,13 @@ pub fn draw_bmp(mut layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : 
     }
 }
 
-pub fn draw_blitz(mut layer: &mut Layer<FramebufferArgb8888>) {
-    let blitz = read_bmp(BLITZ);
-    draw_bmp(layer, &blitz, 190,86);
+pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
+    if img == "example" {
+        let bmp = read_bmp(EXAMPLE);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "blitz" {
+        let bmp = read_bmp(BLITZ);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
 }
