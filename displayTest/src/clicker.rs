@@ -40,7 +40,7 @@ impl Clicker {
     }
 
     pub fn increment(&mut self) {
-         self.joule += self.watt;
+         self.joule += self.powerplant.get_watt();
     }
 
     pub fn reset_clicks(&mut self) {
@@ -128,11 +128,26 @@ impl Clicker {
 
         else if !self.clicked &&  touch.0 > solar_x && touch.0 < solar_x + mode1_width 
                 && touch.1 > solar_y && touch.1 < solar_y + mode1_height {
-            return (true, 1);          
+            if self.joule >= self.powerplant.get_solar_cost() {
+                self.joule = self.joule - self.powerplant.get_solar_cost();
+                self.powerplant.add_solar();
+                self.clicked = true;
+                return (true, 1);
+
+            }
+   
+            return (false, 1);          
         }
 
-        else if !self.clicked &&  touch.0 > solar_x && touch.0 < solar_x + mode1_width 
-                && touch.1 > solar_y && touch.1 < solar_y + mode1_height {
+        else if !self.clicked &&  touch.0 > wind_x && touch.0 < wind_x + mode1_width 
+                && touch.1 > wind_y && touch.1 < wind_y + mode1_height {
+            if self.joule >= self.powerplant.get_wind_cost() {
+                self.joule = self.joule - self.powerplant.get_wind_cost();
+                self.powerplant.add_wind();
+                self.clicked = true;
+                return (true, 1);
+
+            }
             return (true, 1);          
         }
 
@@ -148,7 +163,7 @@ impl Clicker {
     }
 
     pub fn get_watt(&mut self) -> u32 {
-        self.watt
+        self.powerplant.get_watt()
     }
 }
 

@@ -191,9 +191,13 @@ fn main() -> ! {
             let line1_start = "      Buy Powerplant     ";
             let line1_end = "    Buy Infrastructure";
             let offset =      "                         ";
-            draw::write_string(&mut layer_2, 50, 190, format_args!("{}", ""));
-            draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", line1_start, joule, line1_end, offset, watt));
-            
+            draw::write_string(&mut layer_2, 50, 190, format_args!("",));
+            // draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", offset, joule, line1_end, offset, watt));
+            draw::write_string(&mut layer_2, 180, 190, format_args!("Joule: {} J",  joule));
+            draw::write_string(&mut layer_2, 180, 200, format_args!("Watt:  {} W",  watt));
+
+            draw::write_string(&mut layer_2, 60, 190, format_args!("Powerplant",));
+            draw::write_string(&mut layer_2, 330, 190, format_args!("Infrastructure",));
 
            
 
@@ -235,6 +239,10 @@ fn main() -> ! {
             draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
             draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
             draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
+            
+            draw::write_string(&mut layer_2, 55, 135, format_args!("Solar"));
+            draw::write_string(&mut layer_2, 175, 135, format_args!("Wind"));
+            draw::write_string(&mut layer_2, 295, 135, format_args!("Coal"));
 
 
         }
