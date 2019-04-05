@@ -96,7 +96,7 @@ impl Clicker {
 
     // Returns a bool to check if there were changes and an int which indicates the mode
     pub fn check_mode1_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
-
+        (false, 1)
     }
 
     pub fn get_joule(&mut self) -> u32 {
