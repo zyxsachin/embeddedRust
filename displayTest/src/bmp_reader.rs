@@ -15,6 +15,13 @@ pub struct Bmp {
 
 pub const EXAMPLE: &[u8] = include_bytes!("../images/e2.bmp");
 pub const BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
+pub const BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
+pub const PLANTS: &[u8] = include_bytes!("../images/powerpflanzen.bmp");
+pub const COAL: &[u8] = include_bytes!("../images/coal.bmp");
+pub const SOLAR: &[u8] = include_bytes!("../images/sun.bmp");
+pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
+
+
 
 
 pub fn read_bmp(source : &[u8]) -> Bmp {
@@ -46,6 +53,18 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "blitz" {
         let bmp = read_bmp(BLITZ);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "blitz2" {
+        let bmp = read_bmp(BLITZ2);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "plants" {
+        let bmp = read_bmp(PLANTS);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "coal" {
+        let bmp = read_bmp(COAL);
         draw_bmp(layer, &bmp, x_pos, y_pos);
     }
 }

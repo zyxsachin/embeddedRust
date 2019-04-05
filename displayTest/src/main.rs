@@ -151,8 +151,8 @@ fn main() -> ! {
         let ticks = system_clock::ticks();
 
         if mode == 0 {
-            if circle_reset {
-                draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
+            if touch::touches(&mut i2c_3).unwrap().len() == 0 && circle_reset {
+                //draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
                 bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 circle_reset = false;
             }
@@ -179,7 +179,8 @@ fn main() -> ! {
                     mode = check_clicked.1;
                     if check_clicked.0 {
                         clicker.energy_tick();
-                        draw::color_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
+                        bmp_reader::draw_image(&mut layer_1,"blitz2", 190, 86);
+                        //draw::color_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
                         circle_reset = true;
                     }
                 }
