@@ -67,4 +67,12 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
         let bmp = read_bmp(COAL);
         draw_bmp(layer, &bmp, x_pos, y_pos);
     }
+    if img == "solar" {
+        let bmp = read_bmp(SOLAR);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
+    if img == "wind" {
+        let bmp = read_bmp(WIND);
+        draw_bmp(layer, &bmp, x_pos, y_pos);
+    }
 }

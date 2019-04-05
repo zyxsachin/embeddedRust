@@ -13,6 +13,7 @@ use stm32f7_discovery::{
 
 use stm32f7::stm32f7x6::{Peripherals};
 use core::fmt::Write;
+use crate::bmp_reader;
 
 static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
 static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
@@ -138,19 +139,23 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mu
     layer_1.clear();
     layer_2.clear();                
     draw_circle(&mut layer_1, centre_x, centre_y, radius, yellow);
-    draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
+    bmp_reader::draw_image(layer_1, "plants", 50, 80);
+    //draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
     draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
 }
 
 pub fn draw_mode1(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>) {
     layer_1.clear();
     layer_2.clear();                
-  
-    draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);
-    draw_rectangle(&mut layer_1, 170, 20, 100, 100, black);
-    draw_rectangle(&mut layer_1, 290, 20, 100, 100, black);
-    
 
+    bmp_reader::draw_image(layer_1, "solar", 50, 20);
+    bmp_reader::draw_image(layer_1, "wind", 170, 20);
+    bmp_reader::draw_image(layer_1, "coal", 290, 20);
+
+    //draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);
+    //draw_rectangle(&mut layer_1, 170, 20, 100, 100, black);
+    //draw_rectangle(&mut layer_1, 290, 20, 100, 100, black);
+    
     draw_rectangle(&mut layer_1, 20, 170, 440, 50, black);
 
 }
