@@ -63,12 +63,14 @@ impl Clicker {
         let radius = 50;
 
         let powerplant_x = 50;
-
-
         let powerplant_y = 80;
+
+        let infrastructure_x = 330;
+        let infrastructure_y = 80;
 
         let mode0_width = 100;
         let mode0_height = 100;
+
 
         if !self.clicked && dist(touch.0 as usize, touch.1 as usize, centre_x, centre_y) < radius {
 //touch.x > 160 && touch.x < 320 && touch.y > 61 && touch.y < 211 {// && ticks - last_click > 50{
@@ -80,23 +82,65 @@ impl Clicker {
             self.last_touch_pos = (touch.0, touch.1);            
         }
 
-        else if !self.clicked && touch.1 > powerplant_y && touch.1 < powerplant_y + mode0_height 
-            &&  touch.0 > powerplant_x && touch.0 < powerplant_x + mode0_width {
+        else if !self.clicked &&  touch.0 > powerplant_x && touch.0 < powerplant_x + mode0_width 
+                && touch.1 > powerplant_y && touch.1 < powerplant_y + mode0_height  {
             return (false, 1);
+           
+        }
+
+        else if !self.clicked &&  touch.0 > infrastructure_x && touch.0 < infrastructure_x + mode0_width 
+                && touch.1 > infrastructure_y && touch.1 < infrastructure_y + mode0_height {
+            return (false, 0);
            
         }
 
         // draw::draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
         // draw::draw_rectangle(&mut layer_1, 330, 80, 100, 100, black);
 
-
-
         (false, 0)
     }
 
     // Returns a bool to check if there were changes and an int which indicates the mode
     pub fn check_mode1_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
+
+        let mode1_return_x = 20;
+        let mode1_return_y = 170;
+
+        let mode1_return_width = 440;
+        let mode1_return_height = 50;
+
+        let mode1_width = 100;
+        let mode1_height = 100;
+        
+        let solar_x = 50;
+        let solar_y = 20;
+
+        let wind_x = 170;
+        let wind_y = 20;
+
+        let coal_x = 290;
+        let coal_y = 20;
+
+        if !self.clicked &&  touch.0 > mode1_return_x && touch.0 < mode1_return_x + mode1_return_width 
+                && touch.1 > mode1_return_y && touch.1 < mode1_return_y + mode1_return_height {
+            return (false, 0);          
+        }
+
+        else if !self.clicked &&  touch.0 > solar_x && touch.0 < solar_x + mode1_width 
+                && touch.1 > solar_y && touch.1 < solar_y + mode1_height {
+            return (true, 1);          
+        }
+
+        else if !self.clicked &&  touch.0 > solar_x && touch.0 < solar_x + mode1_width 
+                && touch.1 > solar_y && touch.1 < solar_y + mode1_height {
+            return (true, 1);          
+        }
+
         (false, 1)
+    }
+
+    pub fn update_watt(&mut self) {
+        
     }
 
     pub fn get_joule(&mut self) -> u32 {
