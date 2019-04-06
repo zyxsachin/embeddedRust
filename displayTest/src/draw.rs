@@ -152,13 +152,13 @@ pub fn draw_mode1(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
     bmp_reader::draw_image(layer_1, "back2", 0, 144);
 
 
-    bmp_reader::draw_image(layer_1, "solar", 120, 20);
-    bmp_reader::draw_image(layer_1, "wind", 240, 20);
-    bmp_reader::draw_image(layer_1, "coal", 360, 20);
+    bmp_reader::draw_image(layer_1, "solar", 120, 5);
+    bmp_reader::draw_image(layer_1, "wind", 240, 5);
+    bmp_reader::draw_image(layer_1, "gas", 360, 5);
 
-    bmp_reader::draw_image(layer_1, "gas", 120, 140);
-    bmp_reader::draw_image(layer_1, "nuclear", 240, 140);
-    bmp_reader::draw_image(layer_1, "water", 360, 140);
+    bmp_reader::draw_image(layer_1, "coal", 120, 135);
+    bmp_reader::draw_image(layer_1, "nuclear", 240, 135);
+    bmp_reader::draw_image(layer_1, "water", 360, 135);
 
 
     //draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);

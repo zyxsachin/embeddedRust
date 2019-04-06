@@ -4,7 +4,7 @@
 #![warn(clippy::all)]
 #![feature(alloc)]
 
-#[macro_use]
+//#[macro_use]
 extern crate alloc;
 
 mod clicker;
@@ -12,14 +12,14 @@ mod draw;
 mod powerplant;
 mod bmp_reader;
 
-use alloc::sync::Arc;
-use alloc::vec::Vec;
-use stm32f7_discovery::future_mutex;
+// use alloc::sync::Arc;
+// use alloc::vec::Vec;
+// use stm32f7_discovery::future_mutex;
 
 
 
 //use alloc::fmt as fmt;
-use core::fmt::Write;
+//use core::fmt::Write;
 
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout as AllocLayout;
@@ -33,13 +33,13 @@ use stm32f7_discovery::{
 };
 
 
-static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
-static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
-static black: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
-static white: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
-static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
-static yellow: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
-static red: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
+// static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
+// static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
+// static black: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
+// static white: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
+// static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
+// static yellow: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
+// static red: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
 
 #[entry]
 fn main() -> ! {
@@ -58,12 +58,12 @@ fn main() -> ! {
 
     let mut fmc = peripherals.FMC;
     let mut ltdc = peripherals.LTDC;
-    let mut sai_2 = peripherals.SAI2;
-    let mut rng = peripherals.RNG;
-    let mut sdmmc = peripherals.SDMMC1;
-    let mut syscfg = peripherals.SYSCFG;
-    let mut ethernet_mac = peripherals.ETHERNET_MAC;
-    let mut ethernet_dma = peripherals.ETHERNET_DMA;
+    // let mut sai_2 = peripherals.SAI2;
+    // let mut rng = peripherals.RNG;
+    // let mut sdmmc = peripherals.SDMMC1;
+    // let mut syscfg = peripherals.SYSCFG;
+    // let mut ethernet_mac = peripherals.ETHERNET_MAC;
+    // let mut ethernet_dma = peripherals.ETHERNET_DMA;
 
     let i2c_3 = peripherals.I2C3;
 
@@ -83,7 +83,7 @@ fn main() -> ! {
         gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g, gpio_h, gpio_i, gpio_j, gpio_k,
     );
 
-    let mut pp = powerplant::Powerplant::new();
+    let pp = powerplant::Powerplant::new();
     let mut clicker = clicker::Clicker::new(pp);
 
      // i2c
@@ -124,18 +124,18 @@ fn main() -> ! {
 
     // turn led on
     pins.led.set(true);
-    let mut last_led_toggle = system_clock::ticks();
+    // let mut last_led_toggle = system_clock::ticks();
 
     
-    let mut clicked_ticks = 0;
-    let mut clicker_color = sky_blue;
+    // let mut clicked_ticks = 0;
+    // let mut clicker_color = sky_blue;
       
 
-    let max_x = 480;
-    let max_y = 272;
-    let centre_x = max_x / 2;
-    let centre_y = max_y / 2;
-    let radius = 50;
+    // let max_x = 480;
+    // let max_y = 272;
+    // let centre_x = max_x / 2;
+    // let centre_y = max_y / 2;
+    // let radius = 50;
 
     let mut mode = 0;
     let mut mode_just_set = true;
@@ -145,7 +145,9 @@ fn main() -> ! {
     draw::draw_mode0(&mut layer_1, &mut layer_2);
 
 
-    let mut old_tick = system_clock::ticks();;
+    let mut old_tick = system_clock::ticks();
+
+    
 
     loop {
         let ticks = system_clock::ticks();
@@ -157,6 +159,9 @@ fn main() -> ! {
                 circle_reset = false;
             }
             if mode_just_set {
+                if touch::touches(&mut i2c_3).unwrap().len() != 0 {
+                    continue;
+                }
                 layer_1.clear();
                 layer_2.clear();
                 draw::draw_mode0(&mut layer_1, &mut layer_2);
@@ -188,9 +193,9 @@ fn main() -> ! {
  
             let joule = clicker.get_joule();
             let watt = clicker.get_watt();
-            let line1_start = "      Buy Powerplant     ";
-            let line1_end = "    Buy Infrastructure";
-            let offset =      "                         ";
+            // let line1_start = "      Buy Powerplant     ";
+            // let line1_end = "    Buy Infrastructure";
+            // let offset =      "                         ";
             draw::write_string(&mut layer_2, 50, 190, format_args!("",));
             // draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", offset, joule, line1_end, offset, watt));
             draw::write_string(&mut layer_2, 180, 190, format_args!("Joule: {} J",  joule));
@@ -209,6 +214,9 @@ fn main() -> ! {
 
         else if mode == 1 {
             if mode_just_set {
+                if touch::touches(&mut i2c_3).unwrap().len() != 0 {
+                    continue;
+                }
                 layer_1.clear();
                 layer_2.clear();
                 draw::draw_mode1(&mut layer_1, &mut layer_2);
@@ -234,25 +242,47 @@ fn main() -> ! {
             if mode != 1 {
                 mode_just_set = true;
             }
-	
-	    draw::write_string(&mut layer_2, 120, 125, format_args!("Solar"));
-            draw::write_string(&mut layer_2, 240, 125, format_args!("Wind"));
-            draw::write_string(&mut layer_2, 360, 125, format_args!("Coal"));
 
+            let solar_triple = clicker.get_solar();
+            let wind_triple = clicker.get_wind();
+            let gas_triple = clicker.get_gas();
+            let coal_triple = clicker.get_coal();
+            let nuclear_triple = clicker.get_nuclear();
+            let hydro_triple = clicker.get_hydro();
 
+	        draw::write_string(&mut layer_2, 120, 110, format_args!("Solar({}): {} W", solar_triple.1, solar_triple.2));
+            draw::write_string(&mut layer_2, 240, 110, format_args!("Wind({}): {} W", wind_triple.1, wind_triple.2));
+            draw::write_string(&mut layer_2, 360, 110, format_args!("Gas({}): {} W", gas_triple.1, gas_triple.2));
 
+            draw::write_string(&mut layer_2, 120, 240, format_args!("Coal({}): ", coal_triple.1));
+            draw::write_string(&mut layer_2, 120, 250, format_args!("{} W", coal_triple.2));
+            draw::write_string(&mut layer_2, 240, 240, format_args!("Nuclear({}):", nuclear_triple.1));
+            draw::write_string(&mut layer_2, 240, 250, format_args!("{} W", nuclear_triple.2));
+            draw::write_string(&mut layer_2, 360, 240, format_args!("Hydro({}):", hydro_triple.1));
+            draw::write_string(&mut layer_2, 360, 250, format_args!("{} W", hydro_triple.2));
 
-            draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
-            draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
-            draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
             
-            draw::write_string(&mut layer_2, 55, 135, format_args!("Solar"));
-            draw::write_string(&mut layer_2, 175, 135, format_args!("Wind"));
-            draw::write_string(&mut layer_2, 295, 135, format_args!("Coal"));
+            draw::write_string(&mut layer_2, 120, 120, format_args!("Cost: {} J", solar_triple.0));
+            draw::write_string(&mut layer_2, 240, 120, format_args!("Cost: {} J", wind_triple.0));
+            draw::write_string(&mut layer_2, 360, 120, format_args!("Cost: {} J", gas_triple.0));
+            draw::write_string(&mut layer_2, 120, 260, format_args!("Cost: {} J", coal_triple.0));
+            draw::write_string(&mut layer_2, 240, 260, format_args!("Cost: {} J", nuclear_triple.0));
+            draw::write_string(&mut layer_2, 360, 260, format_args!("Cost: {} J", hydro_triple.0));
+
+
+
+
+            // draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
+            // draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
+            // draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
+            
+            // draw::write_string(&mut layer_2, 55, 135, format_args!("Solar"));
+            // draw::write_string(&mut layer_2, 175, 135, format_args!("Wind"));
+            // draw::write_string(&mut layer_2, 295, 135, format_args!("Coal"));
 
 
         }
-            clicker_color = sky_blue;
+            // clicker_color = sky_blue;
 
 
         // else if mode == 1 {
@@ -306,32 +336,6 @@ fn main() -> ! {
 
 
 
-
-fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
-    let d_x;
-    let d_y;
-    if px > qx {
-        d_x = px - qx;
-    }
-    else {
-        d_x = qx - px;
-    }
-    if py > qy {
-        d_y = py - qy; 
-    }
-    else {
-        d_y = qy - py;
-    }
-    let t = d_x * d_x + d_y * d_y;
-    //my_sqrt(t)
-    for i in 0..t {
-        if i * i >= t {
-            return i;
-        }
-            
-    } 
-    0
-}
 
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();

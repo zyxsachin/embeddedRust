@@ -112,14 +112,23 @@ impl Clicker {
         let mode1_width = 100;
         let mode1_height = 100;
         
-        let solar_x = 50;
-        let solar_y = 20;
+        let solar_x = self.powerplant.get_solar_coord().0 as u16;
+        let solar_y = self.powerplant.get_solar_coord().1 as u16;
 
-        let wind_x = 170;
-        let wind_y = 20;
+        let wind_x = self.powerplant.get_wind_coord().0 as u16;
+        let wind_y = self.powerplant.get_wind_coord().1 as u16;
 
-        let coal_x = 290;
-        let coal_y = 20;
+        let gas_x = self.powerplant.get_gas_coord().0 as u16;
+        let gas_y = self.powerplant.get_gas_coord().1 as u16;
+
+        let coal_x = self.powerplant.get_coal_coord().0 as u16;
+        let coal_y = self.powerplant.get_coal_coord().1 as u16;
+
+        let nuclear_x = self.powerplant.get_nuclear_coord().0 as u16;
+        let nuclear_y = self.powerplant.get_nuclear_coord().1 as u16;
+
+        let hydro_x = self.powerplant.get_hydro_coord().0 as u16;
+        let hydro_y = self.powerplant.get_hydro_coord().1 as u16;
 
         if !self.clicked &&  touch.0 > mode1_return_x && touch.0 < mode1_return_x + mode1_return_width 
                 && touch.1 > mode1_return_y && touch.1 < mode1_return_y + mode1_return_height {
@@ -129,9 +138,10 @@ impl Clicker {
         else if !self.clicked &&  touch.0 > solar_x && touch.0 < solar_x + mode1_width 
                 && touch.1 > solar_y && touch.1 < solar_y + mode1_height {
             if self.joule >= self.powerplant.get_solar_cost() {
-                self.joule = self.joule - self.powerplant.get_solar_cost();
+                self.joule -= self.powerplant.get_solar_cost();
                 self.powerplant.add_solar();
                 self.clicked = true;
+                self.update_watt();
                 return (true, 1);
 
             }
@@ -142,9 +152,62 @@ impl Clicker {
         else if !self.clicked &&  touch.0 > wind_x && touch.0 < wind_x + mode1_width 
                 && touch.1 > wind_y && touch.1 < wind_y + mode1_height {
             if self.joule >= self.powerplant.get_wind_cost() {
-                self.joule = self.joule - self.powerplant.get_wind_cost();
+                self.joule -= self.powerplant.get_wind_cost();
                 self.powerplant.add_wind();
                 self.clicked = true;
+                self.update_watt();
+                return (true, 1);
+
+            }
+            return (true, 1);          
+        }
+
+        else if !self.clicked &&  touch.0 > gas_x && touch.0 < gas_x + mode1_width 
+                && touch.1 > gas_y && touch.1 < gas_y + mode1_height {
+            if self.joule >= self.powerplant.get_gas_cost() {
+                self.joule -= self.powerplant.get_gas_cost();
+                self.powerplant.add_gas();
+                self.clicked = true;
+                self.update_watt();
+                return (true, 1);
+            }
+            return (true, 1);          
+        }
+
+        else if !self.clicked &&  touch.0 > coal_x && touch.0 < coal_x + mode1_width 
+                && touch.1 > coal_y && touch.1 < coal_y + mode1_height {
+            if self.joule >= self.powerplant.get_coal_cost() {
+                self.joule -= self.powerplant.get_coal_cost();
+                self.powerplant.add_coal();
+                self.clicked = true;
+                self.update_watt();
+                return (true, 1);
+
+            }
+            return (true, 1);          
+        }
+
+        else if !self.clicked &&  touch.0 > nuclear_x && touch.0 < nuclear_x + mode1_width 
+                && touch.1 > nuclear_y && touch.1 < nuclear_y + mode1_height {
+            if self.joule >= self.powerplant.get_nuclear_cost() {
+                self.joule -= self.powerplant.get_nuclear_cost();
+                self.powerplant.add_nuclear();
+                self.clicked = true;
+                self.update_watt();
+                return (true, 1);
+
+            }
+            return (true, 1);          
+        }
+
+
+        else if !self.clicked &&  touch.0 > hydro_x && touch.0 < hydro_x + mode1_width 
+                && touch.1 > hydro_y && touch.1 < hydro_y + mode1_height {
+            if self.joule >= self.powerplant.get_hydro_cost() {
+                self.joule -= self.powerplant.get_hydro_cost();
+                self.powerplant.add_hydro();
+                self.clicked = true;
+                self.update_watt();
                 return (true, 1);
 
             }
@@ -155,7 +218,7 @@ impl Clicker {
     }
 
     pub fn update_watt(&mut self) {
-        
+        self.watt = self.powerplant.get_watt()
     }
 
     pub fn get_joule(&mut self) -> u32 {
@@ -163,7 +226,31 @@ impl Clicker {
     }
 
     pub fn get_watt(&mut self) -> u32 {
-        self.powerplant.get_watt()
+        self.watt
+    }
+
+    pub fn get_solar(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_solar()
+    }
+
+    pub fn get_wind(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_wind()
+    }
+    
+    pub fn get_gas(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_gas()
+    }
+
+    pub fn get_coal(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_coal()
+    }
+
+    pub fn get_nuclear(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_nuclear()
+    }
+
+    pub fn get_hydro(&mut self) -> (u32, u32, u32) {
+        self.powerplant.get_hydro()
     }
 }
 
