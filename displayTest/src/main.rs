@@ -10,7 +10,9 @@ extern crate alloc;
 mod clicker;
 mod draw;
 mod powerplant;
+mod infrastructure;
 mod bmp_reader;
+mod carbon_dioxide;
 
 // use alloc::sync::Arc;
 // use alloc::vec::Vec;
@@ -83,8 +85,9 @@ fn main() -> ! {
         gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g, gpio_h, gpio_i, gpio_j, gpio_k,
     );
 
-    let pp = powerplant::Powerplant::new();
-    let mut clicker = clicker::Clicker::new(pp);
+    // let pp = powerplant::Powerplant::new();
+    // let is = infrastructure::Infrastructure::new();
+    let mut clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::GreenhouseGas::new());
 
      // i2c
     //i2c::init_pins_and_clocks(rcc, &mut gpio);
@@ -142,12 +145,18 @@ fn main() -> ! {
 
     let mut circle_reset = false;
 
-    draw::draw_mode0(&mut layer_1, &mut layer_2);
+        
+    let mut emissions: usize = 0;
+    let max_emissions: usize = 450;
+
+    draw::draw_mode0(&mut layer_1, &mut layer_2, max_emissions);
 
 
     let mut old_tick = system_clock::ticks();
+    // let mut demand_tick = system_clock::ticks();
 
-    
+    let mut time = 0;
+
 
     loop {
         let ticks = system_clock::ticks();
@@ -164,15 +173,49 @@ fn main() -> ! {
                 }
                 layer_1.clear();
                 layer_2.clear();
-                draw::draw_mode0(&mut layer_1, &mut layer_2);
+                draw::draw_mode0(&mut layer_1, &mut layer_2, max_emissions);
                 bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 mode_just_set = false;
             }
             if ticks - old_tick >= 100 {
+
                 old_tick = ticks;
                 clicker.increment();
+                // let game_continue = clicker.increment();
+                // if !game_continue {
+                //     clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new());
+                //     clicker.reset_demand();
+                //     layer_1.clear();
+                //     layer_2.clear();
+                //     draw::draw_mode0(&mut layer_1, &mut layer_2);
+                    
+                // }
+                time += 1;
+                
+                emissions += clicker.get_emissions() as usize;
+                let absorb = clicker.get_co2_absorb() as usize;
+                if absorb > emissions {
+                    emissions = 0;
+                }
+                else {
+                    emissions -= absorb;
+                }
 
+                if emissions > max_emissions {
+                    mode = 3;
+                    mode_just_set = true;
+                    continue;
+                }
+                
+                draw::draw_emissions(&mut layer_1, &mut layer_2, emissions);
+
+                
             }
+
+            // if ticks - demand_tick >= 500 {
+            //     demand_tick = ticks;
+            //     clicker.increase_demand();
+            // }
 
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {
                 clicker.reset_clicks();             
@@ -191,8 +234,10 @@ fn main() -> ! {
                 }
             }
  
-            let joule = clicker.get_joule();
+            let joule = clicker.get_joule() as u32;
             let watt = clicker.get_watt();
+            let j_per_click = clicker.get_joule_per_click();
+            // let demand = clicker.get_demand();
             // let line1_start = "      Buy Powerplant     ";
             // let line1_end = "    Buy Infrastructure";
             // let offset =      "                         ";
@@ -200,6 +245,11 @@ fn main() -> ! {
             // draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", offset, joule, line1_end, offset, watt));
             draw::write_string(&mut layer_2, 180, 190, format_args!("Joule: {} J",  joule));
             draw::write_string(&mut layer_2, 180, 200, format_args!("Watt:  {} W",  watt));
+            draw::write_string(&mut layer_2, 180, 210, format_args!("Click: {} J/C",  j_per_click));
+            draw::write_string(&mut layer_2, 180, 220, format_args!("Time:  {} s",  time));
+            draw::write_string(&mut layer_2, 180, 230, format_args!("CO2:   {} ppm",  emissions));
+            // draw::write_string(&mut layer_2, 180, 230, format_args!("Demand:{} W",  demand));
+
 
             draw::write_string(&mut layer_2, 60, 190, format_args!("Powerplant",));
             draw::write_string(&mut layer_2, 330, 190, format_args!("Infrastructure",));
@@ -234,7 +284,7 @@ fn main() -> ! {
                     let check_clicked = clicker.check_mode1_clicked((touch.x, touch.y));    
                     mode = check_clicked.1;
                     if check_clicked.0 {
-                       
+                       clicker.update_watt();
                     }
                 }
             }
@@ -281,6 +331,99 @@ fn main() -> ! {
             // draw::write_string(&mut layer_2, 295, 135, format_args!("Coal"));
 
 
+        }
+
+
+         else if mode == 2 {
+            if mode_just_set {
+                if touch::touches(&mut i2c_3).unwrap().len() != 0 {
+                    continue;
+                }
+                layer_1.clear();
+                layer_2.clear();
+                draw::draw_mode2(&mut layer_1, &mut layer_2);
+                
+                mode_just_set = false;
+            }
+          
+
+            if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
+                clicker.reset_clicks();
+            }
+
+            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
+                for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                    let check_clicked = clicker.check_mode2_clicked((touch.x, touch.y));    
+                    mode = check_clicked.1;
+                    if check_clicked.0 {
+                        clicker.update_joule_per_click();
+                    }
+                }
+            }
+
+            if mode != 2 {
+                mode_just_set = true;
+            }
+
+            let battery_triple = clicker.get_battery();
+            let smart_grid_triple = clicker.get_smart_grid();
+            let hvac_triple = clicker.get_hvac();
+            let hvdc_triple = clicker.get_hvdc();
+            let tree_triple = clicker.get_tree();
+            let special_triple = clicker.get_special();
+
+	        draw::write_string(&mut layer_2, 120, 110, format_args!("AAA({}):{}J/C", battery_triple.1, battery_triple.2));
+            draw::write_string(&mut layer_2, 240, 110, format_args!("Smart({}):{}J/C", smart_grid_triple.1, smart_grid_triple.2));
+            draw::write_string(&mut layer_2, 360, 110, format_args!("HVAC({}):{}J/C", hvac_triple.1, hvac_triple.2));
+            // draw::write_string(&mut layer_2, 120, 240, format_args!("HVDC({}):{}J/C", hvdc_triple.1, hvdc_triple.2));
+
+            draw::write_string(&mut layer_2, 120, 240, format_args!("HVDC({}): ", hvdc_triple.1));
+            draw::write_string(&mut layer_2, 120, 250, format_args!("{} J/C", hvdc_triple.2));
+            draw::write_string(&mut layer_2, 240, 240, format_args!("Tree({}):", tree_triple.1));
+            draw::write_string(&mut layer_2, 240, 250, format_args!("{} PPM/S", tree_triple.2));
+            draw::write_string(&mut layer_2, 360, 240, format_args!("????({}):", special_triple.1));
+            draw::write_string(&mut layer_2, 360, 250, format_args!("{} J/C", special_triple.2));
+
+            
+            draw::write_string(&mut layer_2, 120, 120, format_args!("Cost: {} J", battery_triple.0));
+            draw::write_string(&mut layer_2, 240, 120, format_args!("Cost: {} J", smart_grid_triple.0));
+            draw::write_string(&mut layer_2, 360, 120, format_args!("Cost: {} J", hvac_triple.0));
+            
+            draw::write_string(&mut layer_2, 120, 260, format_args!("Cost: {} J", hvdc_triple.0));
+            draw::write_string(&mut layer_2, 240, 260, format_args!("Cost: {} J", tree_triple.0));
+            draw::write_string(&mut layer_2, 360, 260, format_args!("Cost: {} J", special_triple.0));
+
+
+
+
+            // draw::write_string(&mut layer_2, 55, 125, format_args!("Solar"));
+            // draw::write_string(&mut layer_2, 175, 125, format_args!("Wind"));
+            // draw::write_string(&mut layer_2, 295, 125, format_args!("Coal"));
+            
+            // draw::write_string(&mut layer_2, 55, 135, format_args!("Solar"));
+            // draw::write_string(&mut layer_2, 175, 135, format_args!("Wind"));
+            // draw::write_string(&mut layer_2, 295, 135, format_args!("Coal"));
+
+
+        }
+
+        else if mode == 3 {
+            if mode_just_set {
+                layer_1.clear();
+                layer_2.clear();
+
+                draw::write_string(&mut layer_2, 20, 100, format_args!("Climate change has defeated humanity!"));
+                draw::write_string(&mut layer_2, 20, 110, format_args!("However, unlike earth, you can respawn in this game!"));
+                draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
+                mode_just_set = false;
+                clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::GreenhouseGas::new());
+                emissions = 0;
+            }
+            if touch::touches(&mut i2c_3).unwrap().len() == 1 {
+                mode = 0;
+                mode_just_set = true;
+            }
+            
         }
             // clicker_color = sky_blue;
 

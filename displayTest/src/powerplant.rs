@@ -1,26 +1,26 @@
 #![warn(clippy::all)]
 
-// Cost and then count
+ // Cost, current number installed, power, co2 emissions
 pub struct Powerplant {
-    solar: (u32, u32, u32),
-    wind: (u32, u32, u32),
-    gas: (u32, u32, u32),
-    coal: (u32, u32, u32),
-    nuclear: (u32, u32, u32),
-    hydro: (u32, u32, u32),
+    solar: (u32, u32, u32, u32),
+    wind: (u32, u32, u32, u32),
+    gas: (u32, u32, u32, u32),
+    coal: (u32, u32, u32, u32),
+    nuclear: (u32, u32, u32, u32),
+    hydro: (u32, u32, u32, u32),
 }
 
 impl Powerplant {
     
     pub fn new() -> Self {
-        // Cost, current number instealled, power
+        // Cost, current number installed, power, co2 emissions
         Powerplant {
-            solar: (10, 0, 1),
-            wind: (50, 0, 5),
-            gas: (100, 0, 25),
-            coal: (500, 0, 100),
-            nuclear: (10000, 0, 1000),
-            hydro: (100_000, 0, 5000),
+            solar: (10, 0, 1, 0),
+            wind: (20, 0, 2, 0),
+            gas: (100, 0, 20, 10),
+            coal: (200, 0, 50, 30),
+            nuclear: (10000, 0, 1000, 0),
+            hydro: (100_000, 0, 5000, 0),
         }
     }
 
@@ -87,6 +87,11 @@ impl Powerplant {
         (360, 5)
     }
 
+    pub fn get_gas_emissions(&mut self) -> u32{
+        self.gas.1 * self.gas.3
+    }
+
+
     pub fn add_coal(&mut self) {
         self.coal.0 *= 2;
         self.coal.1 += 1;
@@ -106,6 +111,10 @@ impl Powerplant {
 
     pub fn get_coal_coord(&mut self) -> (u32, u32) {
         (120, 135)
+    }
+
+    pub fn get_coal_emissions(&mut self) -> u32 {
+        self.coal.1 * self.coal.3
     }
 
 
@@ -152,6 +161,10 @@ impl Powerplant {
     }
 
     pub fn get_watt(&mut self) -> u32 {
-        self.get_solar_total_watt() + self.get_wind_total_watt() + self.get_gas_total_watt() + self.get_coal_total_watt() + self.get_nuclear_total_watt()
+        self.get_solar_total_watt() + self.get_wind_total_watt() + self.get_gas_total_watt() + self.get_coal_total_watt() + self.get_nuclear_total_watt() + self.get_hydro_total_watt()
+    }
+
+    pub fn get_total_emissions(&mut self) -> u32 {
+        self.get_gas_emissions() + self.get_coal_emissions()
     }
 }

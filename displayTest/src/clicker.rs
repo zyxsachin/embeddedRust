@@ -1,6 +1,8 @@
 #![warn(clippy::all)]
 
 use crate::powerplant;
+use crate::infrastructure;
+use crate::carbon_dioxide;
 
 pub struct Clicker {
     joule: u32,
@@ -9,6 +11,11 @@ pub struct Clicker {
     watt: u32, 
     last_touch_pos: (u16, u16),
     powerplant: powerplant::Powerplant,
+    infrastructure: infrastructure::Infrastructure,
+    carbon_dioxide: carbon_dioxide::GreenhouseGas,
+    energy_demand: u32,
+    new_energy_demand: u32,
+    second_new_energy_demand: u32,
 }
 
     // let mut joule: u32 = 0;
@@ -28,7 +35,7 @@ pub struct Clicker {
 
 impl Clicker {
     
-    pub fn new(pp: powerplant::Powerplant) -> Self {
+    pub fn new(pp: powerplant::Powerplant, is: infrastructure::Infrastructure, co: carbon_dioxide::GreenhouseGas) -> Self {
         Clicker {
             joule: 0,
             clicked: false,
@@ -36,11 +43,29 @@ impl Clicker {
             watt: 0,          
             last_touch_pos: (0, 0),
             powerplant: pp,
+            infrastructure: is,
+            carbon_dioxide: co,
+            energy_demand: 0,
+            new_energy_demand: 1,
+            second_new_energy_demand: 1,
         }
     }
 
-    pub fn increment(&mut self) {
-         self.joule += self.powerplant.get_watt();
+    pub fn increment(&mut self) -> bool {
+        
+        // if self.energy_demand > self.powerplant.get_watt() {
+        //     let demand = self.energy_demand - self.powerplant.get_watt();
+        //     if demand > self.joule {
+        //         return false;
+        //     }
+        // }
+        
+        self.joule += self.powerplant.get_watt();// - self.energy_demand;
+        true
+    }
+
+    pub fn get_demand(&mut self) -> u32 {
+        self.energy_demand
     }
 
     pub fn reset_clicks(&mut self) {
@@ -51,6 +76,19 @@ impl Clicker {
     pub fn energy_tick(&mut self) {
         self.joule += self.j_per_click;
         self.clicked = true;
+    }
+
+    pub fn increase_demand(&mut self) {        
+        let temp = self.energy_demand;
+        self.energy_demand = self.new_energy_demand + self.second_new_energy_demand;
+        self.new_energy_demand = self.second_new_energy_demand;
+        self.second_new_energy_demand = temp;
+
+    }
+
+    pub fn reset_demand(&mut self) {
+        self.energy_demand = 1;
+        self.new_energy_demand = 1;
     }
 
     // Returns a bool to check if the central clicker was clicked and an int which indicates the mode
@@ -90,7 +128,7 @@ impl Clicker {
 
         else if !self.clicked &&  touch.0 > infrastructure_x && touch.0 < infrastructure_x + mode0_width 
                 && touch.1 > infrastructure_y && touch.1 < infrastructure_y + mode0_height {
-            return (false, 0);
+            return (false, 2);
            
         }
 
@@ -141,7 +179,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_solar_cost();
                 self.powerplant.add_solar();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
 
             }
@@ -155,7 +192,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_wind_cost();
                 self.powerplant.add_wind();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
 
             }
@@ -168,7 +204,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_gas_cost();
                 self.powerplant.add_gas();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
             }
             return (true, 1);          
@@ -180,7 +215,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_coal_cost();
                 self.powerplant.add_coal();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
 
             }
@@ -193,7 +227,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_nuclear_cost();
                 self.powerplant.add_nuclear();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
 
             }
@@ -207,7 +240,6 @@ impl Clicker {
                 self.joule -= self.powerplant.get_hydro_cost();
                 self.powerplant.add_hydro();
                 self.clicked = true;
-                self.update_watt();
                 return (true, 1);
 
             }
@@ -217,8 +249,133 @@ impl Clicker {
         (false, 1)
     }
 
+    // Returns a bool to check if there were changes and an int which indicates the mode
+    pub fn check_mode2_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
+
+        let mode2_return_x = 0;
+        let mode2_return_y = 0;
+
+        let mode2_return_width = 100;
+        let mode2_return_height = 272;
+
+        let mode2_width = 100;
+        let mode2_height = 100;
+        
+        let battery_x = self.infrastructure.get_battery_coord().0 as u16;
+        let battery_y = self.infrastructure.get_battery_coord().1 as u16;
+
+        let smart_grid_x = self.infrastructure.get_smart_grid_coord().0 as u16;
+        let smart_grid_y = self.infrastructure.get_smart_grid_coord().1 as u16;
+
+        let hvac_x = self.infrastructure.get_hvac_coord().0 as u16;
+        let hvac_y = self.infrastructure.get_hvac_coord().1 as u16;
+
+        let hvdc_x = self.infrastructure.get_hvdc_coord().0 as u16;
+        let hvdc_y = self.infrastructure.get_hvdc_coord().1 as u16;
+
+        let tree_x = self.carbon_dioxide.get_tree_coord().0 as u16;
+        let tree_y = self.carbon_dioxide.get_tree_coord().1 as u16;
+
+        let special_x = self.carbon_dioxide.get_special_coord().0 as u16;
+        let special_y = self.carbon_dioxide.get_special_coord().1 as u16;
+
+        if !self.clicked &&  touch.0 > mode2_return_x && touch.0 < mode2_return_x + mode2_return_width 
+                && touch.1 > mode2_return_y && touch.1 < mode2_return_y + mode2_return_height {
+            return (false, 0);          
+        }
+
+        else if !self.clicked &&  touch.0 > battery_x && touch.0 < battery_x + mode2_width 
+                && touch.1 > battery_y && touch.1 < battery_y + mode2_height {
+            if self.joule >= self.infrastructure.get_battery_cost() {
+                self.joule -= self.infrastructure.get_battery_cost();
+                self.infrastructure.add_battery();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+        else if !self.clicked &&  touch.0 > smart_grid_x && touch.0 < smart_grid_x + mode2_width 
+                && touch.1 > smart_grid_y && touch.1 < smart_grid_y + mode2_height {
+            if self.joule >= self.infrastructure.get_smart_grid_cost() {
+                self.joule -= self.infrastructure.get_smart_grid_cost();
+                self.infrastructure.add_smart_grid();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+        else if !self.clicked &&  touch.0 > hvac_x && touch.0 < hvac_x + mode2_width 
+                && touch.1 > hvac_y && touch.1 < hvac_y + mode2_height {
+            if self.joule >= self.infrastructure.get_hvac_cost() {
+                self.joule -= self.infrastructure.get_hvac_cost();
+                self.infrastructure.add_hvac();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+        else if !self.clicked &&  touch.0 > hvdc_x && touch.0 < hvdc_x + mode2_width 
+                && touch.1 > hvdc_y && touch.1 < hvdc_y + mode2_height {
+            if self.joule >= self.infrastructure.get_hvdc_cost() {
+                self.joule -= self.infrastructure.get_hvdc_cost();
+                self.infrastructure.add_hvdc();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+        else if !self.clicked &&  touch.0 > tree_x && touch.0 < tree_x + mode2_width 
+                && touch.1 > tree_y && touch.1 < tree_y + mode2_height {
+            if self.joule >= self.carbon_dioxide.get_tree_cost() {
+                self.joule -= self.carbon_dioxide.get_tree_cost();
+                self.carbon_dioxide.add_tree();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+        else if !self.clicked &&  touch.0 > special_x && touch.0 < special_x + mode2_width 
+                && touch.1 > special_y && touch.1 < special_y + mode2_height {
+            if self.joule >= self.carbon_dioxide.get_special_cost() {
+                self.joule -= self.carbon_dioxide.get_special_cost();
+                self.carbon_dioxide.add_special();
+                self.clicked = true;
+                return (true, 2);
+
+            }
+   
+            return (false, 2);          
+        }
+
+
+        (false, 2)
+    }
+
     pub fn update_watt(&mut self) {
         self.watt = self.powerplant.get_watt()
+    }
+
+    pub fn update_joule_per_click(&mut self) {
+        self.j_per_click = self.infrastructure.get_joule_per_click()
+    }
+
+    pub fn get_joule_per_click(&mut self) -> u32 {
+        self.j_per_click
     }
 
     pub fn get_joule(&mut self) -> u32 {
@@ -229,6 +386,15 @@ impl Clicker {
         self.watt
     }
 
+    pub fn get_emissions(&mut self) -> u32 {
+        self.powerplant.get_total_emissions()
+    }
+
+    pub fn get_co2_absorb(&mut self) -> u32 {
+        self.carbon_dioxide.get_co2_absorb()
+    }
+
+ 
     pub fn get_solar(&mut self) -> (u32, u32, u32) {
         self.powerplant.get_solar()
     }
@@ -251,6 +417,30 @@ impl Clicker {
 
     pub fn get_hydro(&mut self) -> (u32, u32, u32) {
         self.powerplant.get_hydro()
+    }
+
+    pub fn get_battery(&mut self) -> (u32, u32, u32) {
+        self.infrastructure.get_battery()
+    }
+
+    pub fn get_smart_grid(&mut self) -> (u32, u32, u32) {
+        self.infrastructure.get_smart_grid()
+    }
+
+    pub fn get_hvac(&mut self) -> (u32, u32, u32) {
+        self.infrastructure.get_hvac()
+    }
+
+    pub fn get_hvdc(&mut self) -> (u32, u32, u32) {
+        self.infrastructure.get_hvdc()
+    }
+
+    pub fn get_tree(&mut self) -> (u32, u32, u32) {
+        self.carbon_dioxide.get_tree()
+    }
+
+    pub fn get_special(&mut self) -> (u32, u32, u32) {
+        self.carbon_dioxide.get_special()
     }
 }
 
