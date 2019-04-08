@@ -25,7 +25,7 @@ impl Powerplant {
     }
 
     pub fn add_solar(&mut self) {
-        self.solar.0 *= 2;
+        self.solar.0 = (self.solar.0 as f32 * 1.1) as u32;
         self.solar.1 += 1;
     }
 
@@ -46,7 +46,7 @@ impl Powerplant {
     }
 
     pub fn add_wind(&mut self) {
-        self.wind.0 *= 2;
+        self.wind.0 = (self.wind.0 as f32 * 1.1) as u32;
         self.wind.1 += 1;
     }
 
@@ -67,7 +67,7 @@ impl Powerplant {
     }
 
     pub fn add_gas(&mut self) {
-        self.gas.0 *= 2;
+        self.gas.0 = (self.gas.0 as f32 * 1.25) as u32;
         self.gas.1 += 1;
     }
 
@@ -93,7 +93,7 @@ impl Powerplant {
 
 
     pub fn add_coal(&mut self) {
-        self.coal.0 *= 2;
+        self.coal.0 = (self.coal.0 as f32 * 1.25) as u32;
         self.coal.1 += 1;
     }
 
@@ -119,7 +119,7 @@ impl Powerplant {
 
 
     pub fn add_nuclear(&mut self) {
-        self.nuclear.0 *= 2;
+        self.nuclear.0 = (self.nuclear.0 as f32 * 1.4) as u32;
         self.nuclear.1 += 1;
     }
 
@@ -140,7 +140,7 @@ impl Powerplant {
     }
 
     pub fn add_hydro(&mut self) {
-        self.hydro.0 *= 2;
+        self.hydro.0 = (self.hydro.0 as f32 * 1.15) as u32;
         self.hydro.1 += 1;
     }
 

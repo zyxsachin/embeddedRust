@@ -21,7 +21,7 @@ impl Infrastructure {
     }
 
     pub fn add_battery(&mut self) {
-        self.battery.0 *= 2;
+        self.battery.0 = (self.battery.0 as f32 * 1.1) as u32;;
         self.battery.1 += 1;
     }
 
@@ -43,7 +43,7 @@ impl Infrastructure {
 
 
     pub fn add_smart_grid(&mut self) {
-        self.smart_grid.0 *= 2;
+        self.smart_grid.0 = (self.smart_grid.0 as f32 * 1.2) as u32;
         self.smart_grid.1 += 1;
     }
 
@@ -65,7 +65,7 @@ impl Infrastructure {
 
 
     pub fn add_hvac(&mut self) {
-        self.hvac.0 *= 2;
+        self.hvac.0 = (self.hvac.0 as f32 * 1.3) as u32;
         self.hvac.1 += 1;
     }
 
@@ -87,7 +87,7 @@ impl Infrastructure {
 
 
     pub fn add_hvdc(&mut self) {
-        self.hvdc.0 *= 2;
+        self.hvdc.0 = (self.hvdc.0 as f32 * 1.4) as u32;
         self.hvdc.1 += 1;
     }
 
