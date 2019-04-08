@@ -13,7 +13,6 @@ pub struct Bmp {
     color : [Color; 32000],
 }
 
-pub const EXAMPLE: &[u8] = include_bytes!("../images/e2.bmp");
 pub const BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
 pub const BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
 pub const PLANTS: &[u8] = include_bytes!("../images/powerpflanzen.bmp");
@@ -24,7 +23,7 @@ pub const NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
 pub const GAS: &[u8] = include_bytes!("../images/gas.bmp");
 pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
 pub const BACK: &[u8] = include_bytes!("../images/back.bmp");
-//pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
+pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 
 
@@ -61,9 +60,7 @@ fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, p
 
 
 pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
-    if img == "example" {
-        read_bmp(layer, EXAMPLE, x_pos, y_pos);
-    }
+
     if img == "blitz" {
         read_bmp(layer, BLITZ, x_pos, y_pos);
     }
@@ -95,7 +92,7 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
         read_bmp(layer, BACK, x_pos, y_pos);
     }
     if img == "test" {
-        //read_bmp(layer, TEST, x_pos, y_pos);
+        read_bmp(layer, TEST, x_pos, y_pos);
     }
     if img == "test2" {
         read_bmp(layer, TEST2, x_pos, y_pos);
