@@ -22,6 +22,8 @@ static BLACK: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
 // static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
 static YELLOW: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
 static RED: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
+static SKY_BLUE: Color = Color{red: 51, green: 204, blue: 255, alpha:255};
+
 
 // pub struct Drawer {
 //     display:  lcd::Color,
@@ -145,12 +147,14 @@ fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
     0
 }
 
-pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>, emissions: usize) {
+pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emsions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
+    color_rectangle(&mut layer_1, 10 + emissions, 10, max_emsions - emissions, 20, SKY_BLUE);
+
 }
 
 
-pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, mut layer_2: &mut Layer<FramebufferAl88>, emissions: usize) {
+pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<FramebufferAl88>, emissions: usize) {
     let max_x = 480;
     let max_y = 272;
     let centre_x = max_x / 2;

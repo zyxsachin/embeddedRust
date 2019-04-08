@@ -207,7 +207,7 @@ fn main() -> ! {
                     continue;
                 }
                 
-                draw::draw_emissions(&mut layer_1, &mut layer_2, emissions);
+                draw::draw_emissions(&mut layer_1, emissions, max_emissions);
 
                 
             }
