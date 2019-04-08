@@ -10,7 +10,7 @@ use stm32f7_discovery::{
 pub struct Bmp {
     width : usize,
     height : usize,
-    color : [Color; 24300],
+    color : [Color; 32000],
 }
 
 pub const EXAMPLE: &[u8] = include_bytes!("../images/e2.bmp");
@@ -23,27 +23,34 @@ pub const WATER: &[u8] = include_bytes!("../images/damm.bmp");
 pub const NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
 pub const GAS: &[u8] = include_bytes!("../images/gas.bmp");
 pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
-pub const BACK1: &[u8] = include_bytes!("../images/back1.bmp");
-pub const BACK2: &[u8] = include_bytes!("../images/back2.bmp");
+pub const BACK: &[u8] = include_bytes!("../images/back.bmp");
+pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 
 
 
-
-pub fn read_bmp(source : &[u8]) -> Bmp {
-    let w = source[18] as usize;
-    let h = source[22] as usize;
-    let offset = source[10] as usize;
-    let black = Color{red: 255,green: 0 ,blue: 0,alpha: 255};
-    let mut col = [black; 24300];
-    for i in 0..(w * h) {
-        col[i] = Color{blue: source[3 * i + offset], green: source[3 * i + offset + 1], red: source[3 * i + offset + 2],alpha: 255};
+fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
+    let w = source[18] as usize + 256 * source[19] as usize;
+    let h = source[22] as usize + 256 * source[23] as usize;
+    let offset = source[10] as usize;    
+     for i in 0..h {
+        for j in 0..w { 
+            let col = Color{blue: source[3 * (j+(h-i-1)*w) + offset], green: source[3 * (j+(h-i-1)*w) + offset + 1], red: source[3 * (j+(h-i-1)*w) + offset + 2], alpha: 255};
+            layer.print_point_color_at(j + pos_x, i + pos_y, col);
+            //layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
+        }
     }
-    Bmp{width : w, height : h , color : col,}
 
+
+    //let mut col = [black; 32000];
+    //for i in 0..(w * h) {
+    //    col[i] = Color{blue: source[3 * i + offset], green: source[3 * i + offset + 1], red: source[3 * i + offset + 2], alpha: 255};
+    //}
+    //Bmp{width : w, height : h , color : col,}
+    
 }
 
 //width must be a multiple of 4
-pub fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
+fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
     for i in 0..bmp.height {
         for j in 0..bmp.width { 
             layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
@@ -51,53 +58,44 @@ pub fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usiz
     }
 }
 
+
+
 pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
     if img == "example" {
-        let bmp = read_bmp(EXAMPLE);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, EXAMPLE, x_pos, y_pos);
     }
     if img == "blitz" {
-        let bmp = read_bmp(BLITZ);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, BLITZ, x_pos, y_pos);
     }
     if img == "blitz2" {
-        let bmp = read_bmp(BLITZ2);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, BLITZ2, x_pos, y_pos);
     }
     if img == "plants" {
-        let bmp = read_bmp(PLANTS);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, PLANTS, x_pos, y_pos);
     }
     if img == "coal" {
-        let bmp = read_bmp(COAL);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, COAL, x_pos, y_pos);
     }
-    if img == "solar" {
-        let bmp = read_bmp(SOLAR);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+     if img == "solar" {
+        read_bmp(layer, SOLAR, x_pos, y_pos);
     }
     if img == "wind" {
-        let bmp = read_bmp(WIND);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, WIND, x_pos, y_pos);
     }
     if img == "nuclear" {
-        let bmp = read_bmp(NUCLEAR);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, NUCLEAR, x_pos, y_pos);
     }
     if img == "gas" {
-        let bmp = read_bmp(GAS);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, GAS, x_pos, y_pos);
     }
     if img == "water" {
-        let bmp = read_bmp(WATER);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+        read_bmp(layer, WATER, x_pos, y_pos);
     }
-    if img == "back1" {
-        let bmp = read_bmp(BACK1);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+    if img == "back" {
+        read_bmp(layer, BACK, x_pos, y_pos);
     }
-    if img == "back2" {
-        let bmp = read_bmp(BACK2);
-        draw_bmp(layer, &bmp, x_pos, y_pos);
+    if img == "test" {
+        read_bmp(layer, TEST, x_pos, y_pos);
+
     }
 }

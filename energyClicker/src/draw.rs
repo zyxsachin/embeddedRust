@@ -162,7 +162,8 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut La
     let radius = 50;
 
     layer_1.clear();
-    layer_2.clear();                
+    layer_2.clear();   
+    bmp_reader::draw_image(&mut layer_1, "test", 0, 0);             
     draw_circle(&mut layer_1, centre_x, centre_y, radius, YELLOW);
     bmp_reader::draw_image(layer_1, "plants", 50, 80);
     //draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
@@ -176,8 +177,7 @@ pub fn draw_mode1(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
     layer_1.clear();
     layer_2.clear();                
 
-    bmp_reader::draw_image(layer_1, "back1", 0, 0);
-    bmp_reader::draw_image(layer_1, "back2", 0, 144);
+    bmp_reader::draw_image(layer_1, "back", 0, 0);
 
 
     bmp_reader::draw_image(layer_1, "solar", 120, 5);
