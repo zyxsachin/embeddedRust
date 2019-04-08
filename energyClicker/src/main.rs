@@ -192,6 +192,7 @@ fn main() -> ! {
                 // }
                 time += 1;
                 
+                let current_emissions = emissions;
                 emissions += clicker.get_emissions() as usize;
                 let absorb = clicker.get_co2_absorb() as usize;
                 if absorb > emissions {
@@ -200,7 +201,9 @@ fn main() -> ! {
                 else {
                     emissions -= absorb;
                 }
-
+                if i128::from(clicker.get_emissions()) - i128::from(clicker.get_co2_absorb()) > 50 {
+                    emissions = current_emissions + 50;
+                }
                 if emissions > max_emissions {
                     mode = 3;
                     mode_just_set = true;
