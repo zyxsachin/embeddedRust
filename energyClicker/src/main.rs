@@ -31,6 +31,7 @@ use stm32f7::stm32f7x6::{CorePeripherals, Peripherals};
 use stm32f7_discovery::{
     gpio::{GpioPort, OutputPin},
     init,
+    random::Rng,
     system_clock::{self, Hz},  touch, lcd::Color, i2c,
 };
 
@@ -60,6 +61,7 @@ fn main() -> ! {
 
     let mut fmc = peripherals.FMC;
     let mut ltdc = peripherals.LTDC;
+    let mut rng = peripherals.RNG;
     // let mut sai_2 = peripherals.SAI2;
     // let mut rng = peripherals.RNG;
     // let mut sdmmc = peripherals.SDMMC1;
@@ -157,7 +159,8 @@ fn main() -> ! {
 
     let mut time = 0;
 
-
+    let mut rng = Rng::init(&mut rng, &mut rcc).expect("RNG init failed");
+   
     loop {
         let ticks = system_clock::ticks();
 
@@ -191,7 +194,12 @@ fn main() -> ! {
                     
                 // }
                 time += 1;
-                
+                if time % 10 == 0 {
+                    mode = 4;
+                    mode_just_set = true;
+                }
+
+
                 let current_emissions = emissions;
                 emissions += clicker.get_emissions() as usize;
                 let absorb = clicker.get_co2_absorb() as usize;
@@ -431,9 +439,31 @@ fn main() -> ! {
             // clicker_color = sky_blue;
 
 
-        // else if mode == 1 {
+          else if mode == 4 {
+            let mut random = 0;
+            draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
 
-        // }
+            if mode_just_set {
+                layer_1.clear();
+                layer_2.clear();
+                random = rng.poll_and_get().expect("Failed to generate random number")%6;
+                mode_just_set = false;
+                if random <= 6 {
+                    clicker.get_powerplant().reset_solar();
+                    bmp_reader::draw_image(&mut layer_1,"test2", 0, 0);
+                } 
+            }
+
+                if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
+                clicker.reset_clicks();
+            }
+
+            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
+                for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                let check_clicked = clicker.check_mode4_clicked((touch.x, touch.y)); 
+                mode_just_set = check_clicked.0;   
+                mode = check_clicked.1; 
+         }}}
             
     
 

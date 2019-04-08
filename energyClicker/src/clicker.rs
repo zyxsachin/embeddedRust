@@ -366,6 +366,23 @@ impl Clicker {
         (false, 2)
     }
 
+    pub fn check_mode4_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
+
+
+        //todo change
+        let mode4_return_x = 0;
+        let mode4_return_y = 0;
+
+        let mode4_return_width = 100;
+        let mode4_return_height = 272;
+        
+        if !self.clicked &&  touch.0 > mode4_return_x && touch.0 < mode4_return_x + mode4_return_width 
+                && touch.1 > mode4_return_y && touch.1 < mode4_return_y + mode4_return_height {
+            return (true, 0);  
+        }
+        (false, 4)        
+    }
+
     pub fn update_watt(&mut self) {
         self.watt = self.powerplant.get_watt()
     }
@@ -441,6 +458,10 @@ impl Clicker {
 
     pub fn get_special(&mut self) -> (u32, u32, u32) {
         self.carbon_dioxide.get_special()
+    }
+
+    pub fn get_powerplant(&mut self) -> &mut powerplant::Powerplant {
+        &mut self.powerplant
     }
 }
 

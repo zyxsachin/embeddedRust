@@ -45,6 +45,11 @@ impl Powerplant {
         (120, 5)
     }
 
+    pub fn reset_solar(&mut self) {
+        self.solar.0 = 10;
+        self.solar.1 = 0;
+    }
+
     pub fn add_wind(&mut self) {
         self.wind.0 = (self.wind.0 as f32 * 1.1) as u32;
         self.wind.1 += 1;
@@ -64,6 +69,11 @@ impl Powerplant {
 
     pub fn get_wind_coord(&mut self) -> (u32, u32) {
         (240, 5)
+    }
+
+    pub fn reset_wind(&mut self) {
+        self.wind.0 = 20;
+        self.wind.1 = 0;
     }
 
     pub fn add_gas(&mut self) {
@@ -89,6 +99,11 @@ impl Powerplant {
 
     pub fn get_gas_emissions(&mut self) -> u32{
         self.gas.1 * self.gas.3
+    }
+
+    pub fn reset_gas(&mut self) {
+        self.gas.0 = 100;
+        self.gas.1 = 0;
     }
 
 
@@ -117,6 +132,10 @@ impl Powerplant {
         self.coal.1 * self.coal.3
     }
 
+    pub fn reset_coal(&mut self) {
+        self.coal.0 = 200;
+        self.coal.1 = 0;
+    }
 
     pub fn add_nuclear(&mut self) {
         self.nuclear.0 = (self.nuclear.0 as f32 * 1.4) as u32;
@@ -139,6 +158,11 @@ impl Powerplant {
         (240, 135)
     }
 
+    pub fn reset_nuclear(&mut self) {
+        self.nuclear.0 = 10000;
+        self.nuclear.1 = 0;
+    }
+
     pub fn add_hydro(&mut self) {
         self.hydro.0 = (self.hydro.0 as f32 * 1.15) as u32;
         self.hydro.1 += 1;
@@ -159,11 +183,16 @@ impl Powerplant {
     pub fn get_hydro_coord(&mut self) -> (u32, u32) {
         (360, 135)
     }
+    
+    pub fn reset_hydro(&mut self) {
+        self.hydro.0 = 100_000;
+        self.hydro.1 = 0;
+    }
 
     pub fn get_watt(&mut self) -> u32 {
         self.get_solar_total_watt() + self.get_wind_total_watt() + self.get_gas_total_watt() + self.get_coal_total_watt() + self.get_nuclear_total_watt() + self.get_hydro_total_watt()
     }
-
+    
     pub fn get_total_emissions(&mut self) -> u32 {
         self.get_gas_emissions() + self.get_coal_emissions()
     }
