@@ -454,16 +454,18 @@ fn main() -> ! {
                 } 
             }
 
-                if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
+            if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
                 clicker.reset_clicks();
             }
 
             else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
                 for touch in &touch::touches(&mut i2c_3).unwrap() {  
-                let check_clicked = clicker.check_mode4_clicked((touch.x, touch.y)); 
-                mode_just_set = check_clicked.0;   
-                mode = check_clicked.1; 
-         }}}
+                    let check_clicked = clicker.check_mode4_clicked((touch.x, touch.y)); 
+                    mode_just_set = check_clicked.0;   
+                    mode = check_clicked.1; 
+                    }
+                }     
+            }
             
     
 
