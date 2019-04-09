@@ -18,7 +18,7 @@ use crate::bmp_reader;
 // static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
 // static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
 static BLACK: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
-// static white: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
+static WHITE: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
 // static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
 static YELLOW: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
 static RED: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
@@ -149,7 +149,7 @@ fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
 
 pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emsions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
-    color_rectangle(&mut layer_1, 10 + emissions, 10, max_emsions - emissions, 20, SKY_BLUE);
+    color_rectangle(&mut layer_1, 10 + emissions, 10, max_emsions - emissions, 20, WHITE);
 
 }
 
@@ -163,7 +163,7 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut La
 
     layer_1.clear();
     layer_2.clear();   
-    bmp_reader::draw_image(&mut layer_1, "test", 0, 0);             
+    bmp_reader::draw_image(&mut layer_1, "background", 0, 0);            
     draw_circle(&mut layer_1, centre_x, centre_y, radius, YELLOW);
     bmp_reader::draw_image(layer_1, "plants", 50, 80);
     //draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);

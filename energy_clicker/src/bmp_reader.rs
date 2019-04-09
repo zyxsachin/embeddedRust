@@ -25,6 +25,7 @@ static  WIND: &[u8] = include_bytes!("../images/wind.bmp");
 static BACK: &[u8] = include_bytes!("../images/back.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
+static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
 
 
 fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
@@ -54,6 +55,44 @@ fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, p
         for j in 0..bmp.width { 
             layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
         }
+    }
+}
+
+fn draw_background(layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
+    let offset = source[10] as usize;
+    let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
+    let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
+   
+    let mut n = offset;
+    for i in 0..272 {
+        for j in 0..60 {
+            if source[n] % 2 == 0 {
+                layer.print_point_color_at(8*j, i, blue);
+            }
+            if (source[n]/2) % 2 == 0 {
+                layer.print_point_color_at(8*j+1, i, blue);
+            }
+            if (source[n]/4) % 2 == 0 {
+                layer.print_point_color_at(8*j+2, i, blue);
+            }
+            if (source[n]/8) % 2 == 0 {
+                layer.print_point_color_at(8*j+3, i, blue);
+            }
+            if (source[n]/16) % 2 == 0 {
+                layer.print_point_color_at(8*j+4, i, blue);
+            }
+            if (source[n]/32) % 2 == 0 {
+                layer.print_point_color_at(8*j+5, i, blue);
+            }
+            if (source[n]/64) % 2 == 0 {
+                layer.print_point_color_at(8*j+6, i, blue);
+            }
+            if (source[n]/128) % 2 == 0 {
+                layer.print_point_color_at(8*j+7, i, blue);
+            }
+            n += 1;
+        }
+        
     }
 }
 
@@ -96,5 +135,8 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "test2" {
         //read_bmp(layer, TEST2, x_pos, y_pos);
+    }
+    if img == "background" {
+        draw_background(layer, BACKGROUND);
     }
 }
