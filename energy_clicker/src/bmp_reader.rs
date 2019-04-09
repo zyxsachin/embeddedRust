@@ -22,7 +22,7 @@ pub const WATER: &[u8] = include_bytes!("../images/damm.bmp");
 pub const NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
 pub const GAS: &[u8] = include_bytes!("../images/gas.bmp");
 pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
-pub const BACK: &[u8] = include_bytes!("../images/back.bmp");
+//pub const BACK: &[u8] = include_bytes!("../images/back.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 
@@ -89,7 +89,7 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
         read_bmp(layer, WATER, x_pos, y_pos);
     }
     if img == "back" {
-        read_bmp(layer, BACK, x_pos, y_pos);
+        //read_bmp(layer, BACK, x_pos, y_pos);
     }
     if img == "test" {
         //read_bmp(layer, TEST, x_pos, y_pos);
