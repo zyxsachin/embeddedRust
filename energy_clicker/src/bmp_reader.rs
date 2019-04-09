@@ -62,33 +62,33 @@ fn draw_background(layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
     let offset = source[10] as usize;
     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
     let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
-   
+    
     let mut n = offset;
     for i in 0..272 {
         for j in 0..60 {
             if source[n] % 2 == 0 {
-                layer.print_point_color_at(8*j, i, blue);
+                layer.print_point_color_at(8*j+7, 271-i, blue);
             }
             if (source[n]/2) % 2 == 0 {
-                layer.print_point_color_at(8*j+1, i, blue);
+                layer.print_point_color_at(8*j+6, 271-i, blue);
             }
             if (source[n]/4) % 2 == 0 {
-                layer.print_point_color_at(8*j+2, i, blue);
+                layer.print_point_color_at(8*j+5, 271-i, blue);
             }
             if (source[n]/8) % 2 == 0 {
-                layer.print_point_color_at(8*j+3, i, blue);
+                layer.print_point_color_at(8*j+4, 271-i, blue);
             }
             if (source[n]/16) % 2 == 0 {
-                layer.print_point_color_at(8*j+4, i, blue);
+                layer.print_point_color_at(8*j+3, 271-i, blue);
             }
             if (source[n]/32) % 2 == 0 {
-                layer.print_point_color_at(8*j+5, i, blue);
+                layer.print_point_color_at(8*j+2, 271-i, blue);
             }
             if (source[n]/64) % 2 == 0 {
-                layer.print_point_color_at(8*j+6, i, blue);
+                layer.print_point_color_at(8*j+1, 271-i, blue);
             }
             if (source[n]/128) % 2 == 0 {
-                layer.print_point_color_at(8*j+7, i, blue);
+                layer.print_point_color_at(8*j,   271-i, blue);
             }
             n += 1;
         }
