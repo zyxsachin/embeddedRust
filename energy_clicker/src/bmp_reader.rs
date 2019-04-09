@@ -27,6 +27,8 @@ static TREE: &[u8] = include_bytes!("../images/tree.bmp");
 static BATTERY: &[u8] = include_bytes!("../images/battery.bmp");
 static INFRASTRUCTURE: &[u8] = include_bytes!("../images/infrastructure.bmp");
 static EUROPAPARK: &[u8] = include_bytes!("../images/europapark.bmp");
+static DC: &[u8] = include_bytes!("../images/acdc.bmp");
+static AC: &[u8] = include_bytes!("../images/hochspannungs.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
@@ -142,6 +144,12 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "europapark" {
         read_bmp(layer, EUROPAPARK, x_pos, y_pos);
+    }
+    if img == "ac" {
+        read_bmp(layer, AC, x_pos, y_pos);
+    }
+    if img == "dc" {
+        read_bmp(layer, DC, x_pos, y_pos);
     }
     if img == "back" {
         read_bmp(layer, BACK, x_pos, y_pos);
