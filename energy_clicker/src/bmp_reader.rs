@@ -23,6 +23,9 @@ static NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
 static GAS: &[u8] = include_bytes!("../images/gas.bmp");
 static  WIND: &[u8] = include_bytes!("../images/wind.bmp");
 static BACK: &[u8] = include_bytes!("../images/back.bmp");
+static TREE: &[u8] = include_bytes!("../images/tree.bmp");
+static BATTERY: &[u8] = include_bytes!("../images/battery.bmp");
+static INFRASTRUCTURE: &[u8] = include_bytes!("../images/infrastructure.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
@@ -126,6 +129,15 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "water" {
         read_bmp(layer, WATER, x_pos, y_pos);
+    }
+    if img == "tree" {
+        read_bmp(layer, TREE, x_pos, y_pos);
+    }
+    if img == "battery" {
+        read_bmp(layer, BATTERY, x_pos, y_pos);
+    }
+    if img == "infrastructure" {
+        read_bmp(layer, INFRASTRUCTURE, x_pos, y_pos);
     }
     if img == "back" {
         read_bmp(layer, BACK, x_pos, y_pos);

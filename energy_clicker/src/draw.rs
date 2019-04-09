@@ -167,7 +167,8 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut La
     draw_circle(&mut layer_1, centre_x, centre_y, radius, YELLOW);
     bmp_reader::draw_image(layer_1, "plants", 50, 80);
     //draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
-    draw_rectangle(&mut layer_1, 330, 80, 100, 100, BLACK);
+    //draw_rectangle(&mut layer_1, 330, 80, 100, 100, BLACK);
+    bmp_reader::draw_image(layer_1, "infrastructure", 330, 80);
     draw_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
     draw_rectangle(&mut layer_1, 9, 9, emissions + 2, 22, RED);
     // color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
@@ -204,12 +205,12 @@ pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
 
     bmp_reader::draw_image(layer_1, "back", 0, 0);
 
-    bmp_reader::draw_image(layer_1, "solar", 120, 5);
+    bmp_reader::draw_image(layer_1, "battery", 120, 5);
     bmp_reader::draw_image(layer_1, "wind", 240, 5);
     bmp_reader::draw_image(layer_1, "gas", 360, 5);
 
     bmp_reader::draw_image(layer_1, "coal", 120, 135);
-    bmp_reader::draw_image(layer_1, "nuclear", 240, 135);
+    bmp_reader::draw_image(layer_1, "tree", 240, 135);
     bmp_reader::draw_image(layer_1, "water", 360, 135);
 
 
