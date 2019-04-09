@@ -12,7 +12,7 @@ pub struct Clicker {
     last_touch_pos: (u16, u16),
     powerplant: powerplant::Powerplant,
     infrastructure: infrastructure::Infrastructure,
-    carbon_dioxide: carbon_dioxide::GreenhouseGas,
+    carbon_dioxide: carbon_dioxide::Carbondioxide,
     energy_demand: u32,
     new_energy_demand: u32,
     second_new_energy_demand: u32,
@@ -35,7 +35,7 @@ pub struct Clicker {
 
 impl Clicker {
     
-    pub fn new(pp: powerplant::Powerplant, is: infrastructure::Infrastructure, co: carbon_dioxide::GreenhouseGas) -> Self {
+    pub fn new(pp: powerplant::Powerplant, is: infrastructure::Infrastructure, co: carbon_dioxide::Carbondioxide) -> Self {
         Clicker {
             joule: 0,
             clicked: false,
@@ -462,6 +462,10 @@ impl Clicker {
 
     pub fn get_powerplant(&mut self) -> &mut powerplant::Powerplant {
         &mut self.powerplant
+    }
+
+    pub fn get_carbon_dioxide(&mut self) -> &mut carbon_dioxide::Carbondioxide {
+        &mut self.carbon_dioxide
     }
 }
 

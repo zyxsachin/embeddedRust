@@ -89,7 +89,7 @@ fn main() -> ! {
 
     // let pp = powerplant::Powerplant::new();
     // let is = infrastructure::Infrastructure::new();
-    let mut clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::GreenhouseGas::new());
+    let mut clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::Carbondioxide::new());
 
      // i2c
     //i2c::init_pins_and_clocks(rcc, &mut gpio);
@@ -195,8 +195,12 @@ fn main() -> ! {
                 // }
                 time += 1;
                 if time % 10 == 0 {
-                    mode = 4;
-                    mode_just_set = true;
+                    let random = rng.poll_and_get().expect("Failed to generate random number")%2;
+                    if random == 0 {
+                        mode = 4;
+                        mode_just_set = true;
+                        continue;
+                    }
                 }
 
 
@@ -427,7 +431,7 @@ fn main() -> ! {
                 draw::write_string(&mut layer_2, 20, 110, format_args!("However, unlike earth, you can respawn in this game!"));
                 draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
                 mode_just_set = false;
-                clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::GreenhouseGas::new());
+                clicker = clicker::Clicker::new(powerplant::Powerplant::new(), infrastructure::Infrastructure::new(), carbon_dioxide::Carbondioxide::new());
                 emissions = 0;
             }
             if touch::touches(&mut i2c_3).unwrap().len() == 1 {
@@ -440,34 +444,63 @@ fn main() -> ! {
 
 
           else if mode == 4 {
-            let mut random = 0;
-            draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
+            //draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
 
             if mode_just_set {
                 layer_1.clear();
                 layer_2.clear();
-                random = rng.poll_and_get().expect("Failed to generate random number")%6;
+                draw::write_string(&mut layer_2, 80, 200, format_args!("Touch with two fingers to continue."));
+                let random = rng.poll_and_get().expect("Failed to generate random number") % 6;
                 mode_just_set = false;
-                if random <= 6 {
+                if random == 0 {
                     clicker.get_powerplant().reset_solar();
-                    bmp_reader::draw_image(&mut layer_1,"test2", 0, 0);
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("A sun exploded amd your Solar Panels have been destroyed."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("The sun will respawn momentarily."));
+                }
+                if random == 1 {
+                    clicker.get_powerplant().reset_wind();
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("A blue whale landed on your wind farm."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("Obviously they have all been destroyed."));
+                }
+                if random == 2 {
+                    clicker.get_carbon_dioxide().remove_trees(50);
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("Your trees have been slashed 'n' burned."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("You lost up to 50 trees."));
                 } 
+                if random == 3 {
+                    clicker.get_powerplant().add_bonus_emissions(50);
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("Andreas Scheuer wants to VROOM VROOM."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("Your ppm/s increases by 50."));
+                } 
+                if random == 4 {
+                    clicker.get_powerplant().reset_gas();
+                    clicker.get_powerplant().reset_coal();
+                    clicker.get_powerplant().reset_nuclear();
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("Purring and threatening dog ate your Powerpflanzen..."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("...except renewables."));
+                } 
+                if random == 5 {
+                    clicker.get_powerplant().reset_nuclear();
+                    draw::write_string(&mut layer_2, 20, 120, format_args!("Greenpeace flies a Superman drone "));
+                    draw::write_string(&mut layer_2, 20, 130, format_args!("into a nuclear power plant."));
+                    draw::write_string(&mut layer_2, 20, 150, format_args!("All your nuclear power plants have been obliterated."));
+                }
+                if random > 5 {
+                    mode = 0;
+                    mode_just_set = true;
+                } 
+                clicker.update_watt();
             }
 
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
                 clicker.reset_clicks();
             }
 
-            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
-                for touch in &touch::touches(&mut i2c_3).unwrap() {  
-                    let check_clicked = clicker.check_mode4_clicked((touch.x, touch.y)); 
-                    mode_just_set = check_clicked.0;   
-                    mode = check_clicked.1; 
-                    }
-                }     
-            }
-            
-    
+            else if touch::touches(&mut i2c_3).unwrap().len() == 3 {   
+                mode = 0;
+                mode_just_set = true;
+            }    
+        }
 
       
   

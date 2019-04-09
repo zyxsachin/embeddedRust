@@ -1,16 +1,16 @@
 #![warn(clippy::all)]
 
 // Cost and then count
-pub struct GreenhouseGas {
+pub struct Carbondioxide {
     tree: (u32, u32, u32),
     special: (u32, u32, u32),
 }
 
-impl GreenhouseGas {
+impl Carbondioxide {
     
     pub fn new() -> Self {
         // Cost, current number installed, co2 absorbtion 
-        GreenhouseGas {
+        Carbondioxide {
             tree: (5, 0, 1),
             special: (100_000, 0, 100_000),
 
@@ -20,6 +20,15 @@ impl GreenhouseGas {
 
     pub fn add_tree(&mut self) {
         self.tree.1 += 1;
+    }
+
+    pub fn remove_trees(&mut self, num : u32) {
+        if num < self.tree.1 {
+            self.tree.1 -= num;
+        } 
+        else {
+            self.tree.1 = 0;
+        }
     }
 
     pub fn get_tree_total_absorb(&mut self) -> u32 {

@@ -13,16 +13,16 @@ pub struct Bmp {
     color : [Color; 32000],
 }
 
-pub const BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
-pub const BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
-pub const PLANTS: &[u8] = include_bytes!("../images/powerpflanzen.bmp");
-pub const COAL: &[u8] = include_bytes!("../images/coal.bmp");
-pub const SOLAR: &[u8] = include_bytes!("../images/sun.bmp");
-pub const WATER: &[u8] = include_bytes!("../images/damm.bmp");
-pub const NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
-pub const GAS: &[u8] = include_bytes!("../images/gas.bmp");
-pub const WIND: &[u8] = include_bytes!("../images/wind.bmp");
-pub const BACK: &[u8] = include_bytes!("../images/back.bmp");
+static BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
+static BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
+static PLANTS: &[u8] = include_bytes!("../images/powerpflanzen.bmp");
+static COAL: &[u8] = include_bytes!("../images/coal.bmp");
+static SOLAR: &[u8] = include_bytes!("../images/sun.bmp");
+static WATER: &[u8] = include_bytes!("../images/damm.bmp");
+static NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
+static GAS: &[u8] = include_bytes!("../images/gas.bmp");
+static  WIND: &[u8] = include_bytes!("../images/wind.bmp");
+static BACK: &[u8] = include_bytes!("../images/back.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 

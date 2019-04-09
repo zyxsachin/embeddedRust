@@ -8,6 +8,7 @@ pub struct Powerplant {
     coal: (u32, u32, u32, u32),
     nuclear: (u32, u32, u32, u32),
     hydro: (u32, u32, u32, u32),
+    bonus_emissions : u32,
 }
 
 impl Powerplant {
@@ -21,6 +22,7 @@ impl Powerplant {
             coal: (200, 0, 50, 30),
             nuclear: (10000, 0, 1000, 0),
             hydro: (100_000, 0, 5000, 0),
+            bonus_emissions: 0,
         }
     }
 
@@ -189,11 +191,15 @@ impl Powerplant {
         self.hydro.1 = 0;
     }
 
+    pub fn add_bonus_emissions(&mut self, num: u32) {
+        self.bonus_emissions += num;
+    }
+
     pub fn get_watt(&mut self) -> u32 {
         self.get_solar_total_watt() + self.get_wind_total_watt() + self.get_gas_total_watt() + self.get_coal_total_watt() + self.get_nuclear_total_watt() + self.get_hydro_total_watt()
     }
     
     pub fn get_total_emissions(&mut self) -> u32 {
-        self.get_gas_emissions() + self.get_coal_emissions()
+        self.get_gas_emissions() + self.get_coal_emissions()  + self.bonus_emissions
     }
 }
