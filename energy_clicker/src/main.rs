@@ -194,7 +194,7 @@ fn main() -> ! {
                     
                 // }
                 time += 1;
-                if time % 10 == 0 {
+                if time % 2 == 0 {
                     let random = rng.poll_and_get().expect("Failed to generate random number")%2;
                     if random == 0 {
                         mode = 4;
@@ -454,21 +454,25 @@ fn main() -> ! {
                 mode_just_set = false;
                 if random == 0 {
                     clicker.get_powerplant().reset_solar();
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("A sun exploded amd your Solar Panels have been destroyed."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("The sun will respawn momentarily."));
                 }
                 if random == 1 {
                     clicker.get_powerplant().reset_wind();
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("A blue whale landed on your wind farm."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("Obviously they have all been destroyed."));
                 }
                 if random == 2 {
                     clicker.get_carbon_dioxide().remove_trees(50);
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("Your trees have been slashed 'n' burned."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("You lost up to 50 trees."));
                 } 
                 if random == 3 {
                     clicker.get_powerplant().add_bonus_emissions(50);
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("Andreas Scheuer wants to VROOM VROOM."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("Your ppm/s increases by 50."));
                 } 
@@ -476,11 +480,13 @@ fn main() -> ! {
                     clicker.get_powerplant().reset_gas();
                     clicker.get_powerplant().reset_coal();
                     clicker.get_powerplant().reset_nuclear();
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("Purring and threatening dog ate your Powerpflanzen..."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("...except renewables."));
                 } 
                 if random == 5 {
                     clicker.get_powerplant().reset_nuclear();
+                    bmp_reader::draw_image(&mut layer_1, "scheuer", 0, 0);
                     draw::write_string(&mut layer_2, 20, 120, format_args!("Greenpeace flies a Superman drone "));
                     draw::write_string(&mut layer_2, 20, 130, format_args!("into a nuclear power plant."));
                     draw::write_string(&mut layer_2, 20, 150, format_args!("All your nuclear power plants have been obliterated."));
@@ -490,15 +496,20 @@ fn main() -> ! {
                     mode_just_set = true;
                 } 
                 clicker.update_watt();
+                bmp_reader::draw_image(&mut layer_1, "x", 440, 0);
             }
 
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
                 clicker.reset_clicks();
             }
 
-            else if touch::touches(&mut i2c_3).unwrap().len() == 3 {   
-                mode = 0;
-                mode_just_set = true;
+            else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
+                for touch in &touch::touches(&mut i2c_3).unwrap() {  
+                    if touch.x > 438 && touch.y < 230 {
+                        mode = 0;
+                        mode_just_set = true;
+                    }
+                }
             }    
         }
 

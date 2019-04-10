@@ -32,7 +32,8 @@ static AC: &[u8] = include_bytes!("../images/hochspannungs.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
-
+static SCHEUER: &[u8] = include_bytes!("../images/ScheuerVroomEditedSmall.bmp"); 
+static X: &[u8] = include_bytes!("../images/x.bmp"); 
 
 fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
     let w = source[18] as usize + 256 * source[19] as usize;
@@ -53,6 +54,22 @@ fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usiz
     //}
     //Bmp{width : w, height : h , color : col,}
     
+}
+
+fn draw_bmp_scaled (layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
+    let w = source[18] as usize + 256 * source[19] as usize;
+    let h = source[22] as usize + 256 * source[23] as usize;
+    let offset = source[10] as usize;  
+    for i in 0..h {
+        for j in 0..w { 
+            let col = Color{blue: source[3 * (j+(h-i-1)*w) + offset], green: source[3 * (j+(h-i-1)*w) + offset + 1], red: source[3 * (j+(h-i-1)*w) + offset + 2], alpha: 255};
+            layer.print_point_color_at(2 * j, 2 * i, col);
+            layer.print_point_color_at(2 * j + 1, 2 * i, col);
+            layer.print_point_color_at(2 * j, 2 * i + 1, col);
+            layer.print_point_color_at(2 * j + 1, 2 * i + 1, col);
+            //layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width ++20125 j]);
+        }
+    }
 }
 
 //width must be a multiple of 4
@@ -162,5 +179,11 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     }
     if img == "background" {
         draw_background(layer, BACKGROUND);
+    }
+    if img == "scheuer" {
+        draw_bmp_scaled(layer, SCHEUER);
+    }
+    if img == "x" {
+        read_bmp(layer, X, x_pos, y_pos);
     }
 }
