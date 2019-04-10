@@ -32,8 +32,16 @@ static AC: &[u8] = include_bytes!("../images/hochspannungs.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
 static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
-static SCHEUER: &[u8] = include_bytes!("../images/ScheuerVroomEditedSmall.bmp"); 
+static SCHEUER: &[u8] = include_bytes!("../images/vroom.bmp"); 
 static X: &[u8] = include_bytes!("../images/x.bmp"); 
+static DOG: &[u8] = include_bytes!("../images/dog.bmp"); 
+static EARTH: &[u8] = include_bytes!("../images/earth.bmp"); 
+static GREEN: &[u8] = include_bytes!("../images/greenpeace.bmp"); 
+static GRID: &[u8] = include_bytes!("../images/smartgrid.bmp"); 
+static QMARK: &[u8] = include_bytes!("../images/questionmark.bmp"); 
+static SLASHBURN: &[u8] = include_bytes!("../images/slashburn.bmp");
+static SUN: &[u8] = include_bytes!("../images/sun2.bmp");  
+static WHALE: &[u8] = include_bytes!("../images/whale.bmp"); 
 
 fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
     let w = source[18] as usize + 256 * source[19] as usize;
@@ -119,10 +127,19 @@ fn draw_background(layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
     }
 }
 
+fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
+    let black = Color{red: 0, green: 0, blue: 0, alpha:255};
+    let white = Color{red: 255, green: 255, blue: 255, alpha:255};
+    for i in 0..100 {
+        for j in 0..272 {
+              layer.print_point_color_at(i, j, black);          
+        }
+    }
+}
+
 
 
 pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
-
     if img == "blitz" {
         read_bmp(layer, BLITZ, x_pos, y_pos);
     }
@@ -169,21 +186,45 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
         read_bmp(layer, DC, x_pos, y_pos);
     }
     if img == "back" {
-        read_bmp(layer, BACK, x_pos, y_pos);
+        draw_back_button(layer);
     }
-    if img == "test" {
+    // if img == "test" {
         //read_bmp(layer, TEST, x_pos, y_pos);
-    }
-    if img == "test2" {
+    // }
+    // if img == "test2" {
         //read_bmp(layer, TEST2, x_pos, y_pos);
-    }
-    if img == "background" {
-        draw_background(layer, BACKGROUND);
-    }
+    // }
+    // if img == "background" {
+    //     draw_background(layer, BACKGROUND);
+    // }
     if img == "scheuer" {
         draw_bmp_scaled(layer, SCHEUER);
     }
     if img == "x" {
         read_bmp(layer, X, x_pos, y_pos);
+    }
+    if img == "smartgrid" {
+        read_bmp(layer, GRID, x_pos, y_pos);
+    }
+    // if img == "greenpeace" {
+    //     draw_bmp_scaled(layer, GREEN);
+    // }
+    if img == "sun" {
+        draw_bmp_scaled(layer, SUN);
+    }
+    if img == "whale" {
+        draw_bmp_scaled(layer, WHALE);
+    }
+    if img == "dog" {
+        draw_bmp_scaled(layer, DOG);
+    }
+    // if img == "earth" {
+    //     draw_bmp_scaled(layer, EARTH);
+    // }
+    // if img == "slash" {
+    //     draw_bmp_scaled(layer, SLASHBURN);
+    // }
+    if img == "questionmark" {
+        read_bmp(layer, QMARK, x_pos, y_pos);
     }
 }
