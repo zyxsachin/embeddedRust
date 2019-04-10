@@ -132,7 +132,18 @@ fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
     let white = Color{red: 255, green: 255, blue: 255, alpha:255};
     for i in 0..100 {
         for j in 0..272 {
-              layer.print_point_color_at(i, j, black);          
+        layer.print_point_color_at(i, j, black);
+        }
+    }
+    for i in 0..100 {
+        for j in 0..272 {        
+              if i > 10 && i < 90 && (i + j == 146 || j - i == 126) {
+                layer.print_point_color_at(i, j, white);
+                layer.print_point_color_at(i + 1, j, white);
+                layer.print_point_color_at(i, j + 1, white);
+                layer.print_point_color_at(i - 1, j, white);
+                layer.print_point_color_at(i, j - 1, white);
+            } 
         }
     }
 }
