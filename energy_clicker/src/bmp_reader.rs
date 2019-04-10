@@ -135,9 +135,22 @@ fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
         layer.print_point_color_at(i, j, black);
         }
     }
+    layer.print_point_color_at(10, 136, white);
     for i in 0..100 {
         for j in 0..272 {        
               if i > 10 && i < 90 && (i + j == 146 || j - i == 126) {
+                layer.print_point_color_at(i, j, white);
+                layer.print_point_color_at(i + 1, j, white);
+                layer.print_point_color_at(i, j + 1, white);
+                layer.print_point_color_at(i - 1, j, white);
+                layer.print_point_color_at(i, j - 1, white);
+            } 
+        }
+    }
+    layer.print_point_color_at(50, 136, white);
+    for i in 0..100 {
+        for j in 0..272 {        
+              if i > 50 && i < 90 && (i + j == 186 || j - i == 86) {
                 layer.print_point_color_at(i, j, white);
                 layer.print_point_color_at(i + 1, j, white);
                 layer.print_point_color_at(i, j + 1, white);

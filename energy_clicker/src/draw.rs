@@ -206,7 +206,7 @@ pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
     bmp_reader::draw_image(layer_1, "back", 0, 0);
 
     bmp_reader::draw_image(layer_1, "battery", 120, 5);
-    bmp_reader::draw_image(layer_1, "wind", 240, 5);
+    bmp_reader::draw_image(layer_1, "smartgrid", 240, 5);
     bmp_reader::draw_image(layer_1, "ac", 360, 5);
 
     bmp_reader::draw_image(layer_1, "dc", 120, 135);
