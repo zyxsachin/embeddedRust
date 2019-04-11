@@ -147,9 +147,9 @@ fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
     0
 }
 
-pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emsions : usize) {
+pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emissions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
-    color_rectangle(&mut layer_1, 10 + emissions, 10, max_emsions - emissions, 20, WHITE);
+    color_rectangle(&mut layer_1, 10 + emissions, 10, max_emissions - emissions, 20, WHITE);
 
 }
 
@@ -164,13 +164,14 @@ pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut La
     layer_1.clear();
     layer_2.clear();   
     bmp_reader::draw_image(&mut layer_1, "background", 0, 0);            
-    draw_circle(&mut layer_1, centre_x, centre_y, radius, YELLOW);
+    // draw_circle(&mut layer_1, centre_x, centre_y, radius, YELLOW);
     bmp_reader::draw_image(layer_1, "plants", 50, 80);
     //draw_rectangle(&mut layer_1, 50, 80, 100, 100, black);
     //draw_rectangle(&mut layer_1, 330, 80, 100, 100, BLACK);
     bmp_reader::draw_image(layer_1, "infrastructure", 330, 80);
     draw_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
     draw_rectangle(&mut layer_1, 9, 9, emissions + 2, 22, RED);
+    
     // color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
     
 }
@@ -199,7 +200,7 @@ pub fn draw_mode1(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
 }
 
 
-pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<FramebufferAl88>) {
+pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<FramebufferAl88>, hidden: bool) {
     layer_1.clear();
     layer_2.clear();                
 
@@ -211,7 +212,13 @@ pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
 
     bmp_reader::draw_image(layer_1, "dc", 120, 135);
     bmp_reader::draw_image(layer_1, "tree", 240, 135);
-    bmp_reader::draw_image(layer_1, "europapark", 360, 135);
+    if hidden {
+        bmp_reader::draw_image(layer_1, "questionmark", 360, 135);
+    }
+    else {
+        bmp_reader::draw_image(layer_1, "europapark", 360, 135);
+    }
+    
 
 
     //draw_rectangle(&mut layer_1, 50, 20, 100, 100, black);

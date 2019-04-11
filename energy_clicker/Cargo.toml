@@ -1,5 +1,5 @@
 [package]
-name = "displayTest"
+name = "energy_clicker"
 version = "0.1.0"
 authors = ["Sachin Rajgopal <zyxsachin@hotmail.com>"]
 edition = "2018"

@@ -13,6 +13,7 @@ pub struct Clicker {
     powerplant: powerplant::Powerplant,
     infrastructure: infrastructure::Infrastructure,
     carbon_dioxide: carbon_dioxide::Carbondioxide,
+    hidden: bool,
     energy_demand: u32,
     new_energy_demand: u32,
     second_new_energy_demand: u32,
@@ -45,6 +46,7 @@ impl Clicker {
             powerplant: pp,
             infrastructure: is,
             carbon_dioxide: co,
+            hidden: true,
             energy_demand: 0,
             new_energy_demand: 1,
             second_new_energy_demand: 1,
@@ -68,6 +70,10 @@ impl Clicker {
         self.energy_demand
     }
 
+    pub fn cheat(&mut self) {
+        self.joule += 100_000;
+    }
+
     pub fn reset_clicks(&mut self) {
         self.last_touch_pos = (0, 0);
         self.clicked = false;
@@ -89,6 +95,10 @@ impl Clicker {
     pub fn reset_demand(&mut self) {
         self.energy_demand = 1;
         self.new_energy_demand = 1;
+    }
+
+    pub fn get_hidden(&mut self) -> bool {
+        self.hidden
     }
 
     // Returns a bool to check if the central clicker was clicked and an int which indicates the mode
@@ -276,8 +286,8 @@ impl Clicker {
         let tree_x = self.carbon_dioxide.get_tree_coord().0 as u16;
         let tree_y = self.carbon_dioxide.get_tree_coord().1 as u16;
 
-        let special_x = self.carbon_dioxide.get_special_coord().0 as u16;
-        let special_y = self.carbon_dioxide.get_special_coord().1 as u16;
+        let special_x = self.infrastructure.get_special_coord().0 as u16;
+        let special_y = self.infrastructure.get_special_coord().1 as u16;
 
         if !self.clicked &&  touch.0 > mode2_return_x && touch.0 < mode2_return_x + mode2_return_width 
                 && touch.1 > mode2_return_y && touch.1 < mode2_return_y + mode2_return_height {
@@ -351,10 +361,11 @@ impl Clicker {
 
         else if !self.clicked &&  touch.0 > special_x && touch.0 < special_x + mode2_width 
                 && touch.1 > special_y && touch.1 < special_y + mode2_height {
-            if self.joule >= self.carbon_dioxide.get_special_cost() {
-                self.joule -= self.carbon_dioxide.get_special_cost();
-                self.carbon_dioxide.add_special();
+            if self.joule >= self.infrastructure.get_special_cost() {
+                self.joule -= self.infrastructure.get_special_cost();
+                self.infrastructure.add_special();
                 self.clicked = true;
+                self.hidden = false;
                 return (true, 2);
 
             }
@@ -457,7 +468,7 @@ impl Clicker {
     }
 
     pub fn get_special(&mut self) -> (u32, u32, u32) {
-        self.carbon_dioxide.get_special()
+        self.infrastructure.get_special()
     }
 
     pub fn get_powerplant(&mut self) -> &mut powerplant::Powerplant {

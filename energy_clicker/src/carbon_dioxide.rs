@@ -64,11 +64,11 @@ impl Carbondioxide {
     }
 
     pub fn get_special_coord(&mut self) -> (u32, u32) {
-        (240, 135)
+        (360, 135)
     }
 
     pub fn get_co2_absorb(&mut self) -> u32 {
-        self.get_tree_total_absorb() + self.get_special_total_absorb()
+        self.get_tree_total_absorb()
     }
 
 
