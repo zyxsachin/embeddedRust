@@ -1,4 +1,4 @@
-# stm32f7-discovery
+# Energy Clicker
 
 ## Building
 
