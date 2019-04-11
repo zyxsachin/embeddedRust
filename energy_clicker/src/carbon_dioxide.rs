@@ -1,6 +1,6 @@
 #![warn(clippy::all)]
 
-// Cost and then count
+// Cost, current number installed, co2 absorbtion 
 pub struct Carbondioxide {
     tree: (u32, u32, u32),
     // special: (u32, u32, u32),

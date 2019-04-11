@@ -1,7 +1,8 @@
 # Energy Clicker
 
-## Building
+- **Go to the energy-clicker directory**
 
+## Building
 - **Install the thumbv7em-none-eabihf target**: Run `rustup target add thumbv7em-none-eabihf`.
 - **Run `cargo build`**
 

@@ -70,15 +70,18 @@ impl Clicker {
     //     self.energy_demand
     // }
 
+    // The developers needed to cheat to test all functions. We weren't patient enough to earn money the right way
     pub fn cheat(&mut self) {
         self.joule += 100_000;
     }
 
+    // Allows the clicker to be clicked again
     pub fn reset_clicks(&mut self) {
         self.last_touch_pos = (0, 0);
         self.clicked = false;
     }
 
+    // Adds joule for every click
     pub fn energy_tick(&mut self) {
         self.joule += self.j_per_click;
         self.clicked = true;
@@ -96,6 +99,7 @@ impl Clicker {
     //     self.energy_demand = 1;
     //     self.new_energy_demand = 1;
     // }
+
 
     pub fn get_hidden(&mut self) -> bool {
         self.hidden
@@ -393,10 +397,12 @@ impl Clicker {
     //     (false, 4)        
     // }
 
+    // Updates the watt number
     pub fn update_watt(&mut self) {
         self.watt = self.powerplant.get_watt()
     }
 
+    // Updates the joules per click number
     pub fn update_joule_per_click(&mut self) {
         self.j_per_click = self.infrastructure.get_joule_per_click()
     }
@@ -479,6 +485,8 @@ impl Clicker {
     // }
 }
 
+
+// A function to measure the distance between two points
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
     let d_x;
     let d_y;

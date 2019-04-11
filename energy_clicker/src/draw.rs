@@ -65,6 +65,7 @@ static RED: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
 //     }
 // }
 
+// Draws a rectangle, but it is not filled in
 pub fn draw_rectangle(layer: &mut Layer<FramebufferArgb8888>, x_coord: usize, y_coord: usize, x_length: usize, y_length: usize, color: Color) {
     let x_limit = x_coord + x_length + 1;
     let y_limit = y_coord + y_length + 1;
@@ -82,7 +83,7 @@ pub fn draw_rectangle(layer: &mut Layer<FramebufferArgb8888>, x_coord: usize, y_
         }
 }
 
-
+// Fills in a rectangle, but not its outline 
 pub fn color_rectangle(layer: &mut Layer<FramebufferArgb8888>, x_coord: usize, y_coord: usize, x_length: usize, y_length: usize, color: Color) {
     let x_limit = x_coord + x_length + 1;
     let y_limit = y_coord + y_length + 1;
@@ -112,6 +113,7 @@ pub fn color_rectangle(layer: &mut Layer<FramebufferArgb8888>, x_coord: usize, y
 //     }
 // }
 
+// Writes a string at the given coordinates
 pub fn write_string(layer: &mut Layer<FramebufferAl88>, x_coord: u32, y_coord: u32, text: core::fmt::Arguments<>){
      let mut text_layer = layer.text_writer();
      text_layer.x_pos = x_coord as usize;
@@ -147,6 +149,7 @@ pub fn write_string(layer: &mut Layer<FramebufferAl88>, x_coord: u32, y_coord: u
 //     0
 // }
 
+// Draws the emissions bar
 pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emissions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
     color_rectangle(&mut layer_1, 10 + emissions, 10, max_emissions - emissions, 20, WHITE);
@@ -212,6 +215,8 @@ pub fn draw_mode2(layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<
 
     bmp_reader::draw_image(layer_1, "dc", 120, 135);
     bmp_reader::draw_image(layer_1, "tree", 240, 135);
+
+    // Adds the special image after it has been bought once
     if hidden {
         bmp_reader::draw_image(layer_1, "questionmark", 360, 135);
     }

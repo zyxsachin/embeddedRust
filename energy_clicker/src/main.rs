@@ -55,7 +55,6 @@ fn main() -> ! {
     let mut flash = peripherals.FLASH;
 
 
-
     init::init_system_clock_216mhz(&mut rcc, &mut pwr, &mut flash);
     init::enable_gpio_ports(&mut rcc);
 
@@ -96,9 +95,10 @@ fn main() -> ! {
     let mut i2c_3 = i2c::init(i2c_3, &mut rcc);
     touch::check_family_id(&mut i2c_3).unwrap();
 
-    let hertz = 100;
+
 
     // configure the systick timer 20Hz (20 ticks per second)
+    let hertz = 100;
     init::init_systick(Hz(hertz), &mut systick, &rcc);
     systick.enable_interrupt();
 
@@ -121,6 +121,7 @@ fn main() -> ! {
     let yellow = Color{red: 255, green: 255, blue: 0, alpha: 255};
     let red = Color{red: 255, green: 0, blue: 0, alpha: 255};
 */
+
     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
     layer_1.clear();
     layer_2.clear();
@@ -142,15 +143,22 @@ fn main() -> ! {
     // let centre_y = max_y / 2;
     // let radius = 50;
 
+    // The mode of the game, which correspond to the various menus
     let mut mode = 0;
+    // Helps to handle mode changes so that the menus only get drawn once and not after every tick
     let mut mode_just_set = true;
 
+    // Used to make clicker button need clicks and not allow that holding the finger on the clicker increases joules
     let mut circle_reset = false;
 
-        
+    // The current emissions
     let mut emissions: usize = 0;
+
+    // The max emissions as decided by 2 degree goal for CO2 emissions
     let max_emissions: usize = 450;
 
+
+    // This loop serves as the introduction/splash screen
     loop {
         draw::write_string(&mut layer_2, 20, 100, format_args!("Energy Clicker"));
         draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start the game"));
@@ -167,26 +175,33 @@ fn main() -> ! {
     draw::draw_emissions(&mut layer_1, emissions, max_emissions);
     draw::draw_mode0(&mut layer_1, &mut layer_2, max_emissions);
    
-
+    // Used to check the time elapsed 
     let mut old_tick = system_clock::ticks();
     // let mut demand_tick = system_clock::ticks();
 
+    // The time in seconds
     let mut time = 0;
 
     let mut rng = Rng::init(&mut rng, &mut rcc).expect("RNG init failed");
 
+    // Toggles the special infrastructure image
     let mut hidden_special_set = false;
+
+    // Prevents the cheat from working too well (yes, that is rather paradoxical)
     let mut cheat_set = false;
    
     loop {
         let ticks = system_clock::ticks();
 
+        // The default mode with the clicker
         if mode == 0 {
+            // Sets the image of the clicker
             if touch::touches(&mut i2c_3).unwrap().len() == 0 && circle_reset {
                 //draw::color_circle(&mut layer_1, centre_x, centre_y, radius, sky_blue);
                 bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 circle_reset = false;
             }
+            // The cheating section to allow developers to test some stuff
             if touch::touches(&mut i2c_3).unwrap().len() == 3 && !cheat_set {
                 clicker.cheat();
                 cheat_set = true;
@@ -194,6 +209,8 @@ fn main() -> ! {
             if touch::touches(&mut i2c_3).unwrap().len() == 0 && cheat_set { 
                 cheat_set = false;
             }
+
+            // If the mode was just set, then the menu will get drawn, but the finger must not be on the menu
             if mode_just_set {
                 if touch::touches(&mut i2c_3).unwrap().len() != 0 {
                     continue;
@@ -205,6 +222,7 @@ fn main() -> ! {
                 bmp_reader::draw_image(&mut layer_1,"blitz", 190, 86);
                 mode_just_set = false;
             }
+            // Checks if a second has elapsed
             if ticks - old_tick >= 100 {
 
                 old_tick = ticks;
@@ -229,7 +247,7 @@ fn main() -> ! {
                     }
                 }
 
-
+                // Increases or decreases the emissions
                 let current_emissions = emissions;
                 emissions += clicker.get_emissions() as usize;
                 let absorb = clicker.get_co2_absorb() as usize;
@@ -239,9 +257,11 @@ fn main() -> ! {
                 else {
                     emissions -= absorb;
                 }
+                // 50 is the maximum emissions limit, so that the game does not become too difficult
                 if i128::from(clicker.get_emissions()) - i128::from(clicker.get_co2_absorb()) > 50 {
                     emissions = current_emissions + 50;
                 }
+                // 450 ppm goal reached -> GAME OVER!
                 if emissions > max_emissions {
                     mode = 3;
                     mode_just_set = true;
@@ -261,7 +281,7 @@ fn main() -> ! {
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {
                 clicker.reset_clicks();             
             }
-
+            // Checks if something in the menu was clicked
             else if touch::touches(&mut i2c_3).unwrap().len() == 1 {    
                 for touch in &touch::touches(&mut i2c_3).unwrap() {  
                     let check_clicked = clicker.check_mode0_clicked((touch.x, touch.y));    
@@ -275,14 +295,14 @@ fn main() -> ! {
                 }
             }
  
-            let joule = clicker.get_joule() as u32;
+            let joule = clicker.get_joule();
             let watt = clicker.get_watt();
             let j_per_click = clicker.get_joule_per_click();
             // let demand = clicker.get_demand();
             // let line1_start = "      Buy Powerplant     ";
             // let line1_end = "    Buy Infrastructure";
             // let offset =      "                         ";
-            draw::write_string(&mut layer_2, 50, 190, format_args!("",));
+            // draw::write_string(&mut layer_2, 50, 190, format_args!("",));
             // draw::write_string(&mut layer_2, 0, 190, format_args!("{}Joule: {} J{}\n{}Watt:  {} W", offset, joule, line1_end, offset, watt));
             draw::write_string(&mut layer_2, 180, 190, format_args!("Joule: {} J",  joule));
             draw::write_string(&mut layer_2, 180, 200, format_args!("Watt:  {} W",  watt));
@@ -302,7 +322,7 @@ fn main() -> ! {
             }
 
         }
-
+        // The powerplant menu
         else if mode == 1 {
             if mode_just_set {
                 if touch::touches(&mut i2c_3).unwrap().len() != 0 {
@@ -374,8 +394,8 @@ fn main() -> ! {
 
         }
 
-
-         else if mode == 2 {
+        // The infrastructure menu
+        else if mode == 2 {
             if mode_just_set {
                 if touch::touches(&mut i2c_3).unwrap().len() != 0 {
                     continue;
@@ -451,7 +471,7 @@ fn main() -> ! {
 
 
         }
-
+        // Game over menu
         else if mode == 3 {
             if mode_just_set {
                 layer_1.clear();
@@ -473,8 +493,8 @@ fn main() -> ! {
         }
             // clicker_color = sky_blue;
 
-
-          else if mode == 4 {
+        // Random event menu
+        else if mode == 4 {
             //draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start again."));
 
             if mode_just_set {
@@ -533,7 +553,7 @@ fn main() -> ! {
             if touch::touches(&mut i2c_3).unwrap().len() == 0 {    
                 clicker.reset_clicks();
             }
-
+            // Exits the random event menu
             else if touch::touches(&mut i2c_3).unwrap().len() == 1 {   
                 for touch in &touch::touches(&mut i2c_3).unwrap() {  
                     if touch.x > 438 && touch.y < 230 {
