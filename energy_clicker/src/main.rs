@@ -202,7 +202,7 @@ fn main() -> ! {
                 circle_reset = false;
             }
             // The cheating section to allow developers to test some stuff
-            if touch::touches(&mut i2c_3).unwrap().len() == 3 && !cheat_set {
+            if touch::touches(&mut i2c_3).unwrap().len() == 5 && !cheat_set {
                 clicker.cheat();
                 cheat_set = true;
             }
