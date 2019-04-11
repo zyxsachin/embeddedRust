@@ -7,11 +7,11 @@ use stm32f7_discovery::{
 
 
 
-pub struct Bmp {
-    width : usize,
-    height : usize,
-    color : [Color; 32000],
-}
+// pub struct Bmp {
+//     width : usize,
+//     height : usize,
+//     color : [Color; 32000],
+// }
 
 static BLITZ: &[u8] = include_bytes!("../images/Blitz.bmp");
 static BLITZ2: &[u8] = include_bytes!("../images/Blitz2.bmp");
@@ -22,7 +22,7 @@ static WATER: &[u8] = include_bytes!("../images/damm.bmp");
 static NUCLEAR: &[u8] = include_bytes!("../images/nuke.bmp");
 static GAS: &[u8] = include_bytes!("../images/gas.bmp");
 static  WIND: &[u8] = include_bytes!("../images/wind.bmp");
-static BACK: &[u8] = include_bytes!("../images/back.bmp");
+// static BACK: &[u8] = include_bytes!("../images/back.bmp");
 static TREE: &[u8] = include_bytes!("../images/tree.bmp");
 static BATTERY: &[u8] = include_bytes!("../images/battery.bmp");
 static INFRASTRUCTURE: &[u8] = include_bytes!("../images/infrastructure.bmp");
@@ -31,15 +31,15 @@ static DC: &[u8] = include_bytes!("../images/acdc.bmp");
 static AC: &[u8] = include_bytes!("../images/hochspannungs.bmp");
 //pub const TEST: &[u8] = include_bytes!("../images/test.bmp");
 //pub const TEST2: &[u8] = include_bytes!("../images/test2.bmp");
-static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
+// static BACKGROUND: &[u8] = include_bytes!("../images/background.bmp"); 
 static SCHEUER: &[u8] = include_bytes!("../images/vroom.bmp"); 
 static X: &[u8] = include_bytes!("../images/x.bmp"); 
 static DOG: &[u8] = include_bytes!("../images/dog.bmp"); 
-static EARTH: &[u8] = include_bytes!("../images/earth.bmp"); 
-static GREEN: &[u8] = include_bytes!("../images/greenpeace.bmp"); 
+// static EARTH: &[u8] = include_bytes!("../images/earth.bmp"); 
+// static GREEN: &[u8] = include_bytes!("../images/greenpeace.bmp"); 
 static GRID: &[u8] = include_bytes!("../images/smartgrid.bmp"); 
 static QMARK: &[u8] = include_bytes!("../images/questionmark.bmp"); 
-static SLASHBURN: &[u8] = include_bytes!("../images/slashburn.bmp");
+// static SLASHBURN: &[u8] = include_bytes!("../images/slashburn.bmp");
 static SUN: &[u8] = include_bytes!("../images/sun2.bmp");  
 static WHALE: &[u8] = include_bytes!("../images/whale.bmp"); 
 static CO2: &[u8] = include_bytes!("../images/co.bmp"); 
@@ -81,52 +81,52 @@ fn draw_bmp_scaled (layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
     }
 }
 
-//width must be a multiple of 4
-fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
-    for i in 0..bmp.height {
-        for j in 0..bmp.width { 
-            layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
-        }
-    }
-}
+// //width must be a multiple of 4
+// fn draw_bmp(layer: &mut Layer<FramebufferArgb8888>, bmp : &Bmp, pos_x : usize, pos_y : usize) {
+//     for i in 0..bmp.height {
+//         for j in 0..bmp.width { 
+//             layer.print_point_color_at(j + pos_x, i + pos_y, bmp.color[(bmp.height - i - 1) * bmp.width + j]);
+//         }
+//     }
+// }
 
-fn draw_background(layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
-    let offset = source[10] as usize;
-    let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
-    let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
+// fn draw_background(layer: &mut Layer<FramebufferArgb8888>, source : &[u8]) {
+//     let offset = source[10] as usize;
+//     let sky_blue = Color{red: 51, green: 204, blue: 255, alpha:255};
+//     let blue = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
     
-    let mut n = offset;
-    for i in 0..272 {
-        for j in 0..60 {
-            if source[n] % 2 == 0 {
-                layer.print_point_color_at(8*j+7, 271-i, blue);
-            }
-            if (source[n]/2) % 2 == 0 {
-                layer.print_point_color_at(8*j+6, 271-i, blue);
-            }
-            if (source[n]/4) % 2 == 0 {
-                layer.print_point_color_at(8*j+5, 271-i, blue);
-            }
-            if (source[n]/8) % 2 == 0 {
-                layer.print_point_color_at(8*j+4, 271-i, blue);
-            }
-            if (source[n]/16) % 2 == 0 {
-                layer.print_point_color_at(8*j+3, 271-i, blue);
-            }
-            if (source[n]/32) % 2 == 0 {
-                layer.print_point_color_at(8*j+2, 271-i, blue);
-            }
-            if (source[n]/64) % 2 == 0 {
-                layer.print_point_color_at(8*j+1, 271-i, blue);
-            }
-            if (source[n]/128) % 2 == 0 {
-                layer.print_point_color_at(8*j,   271-i, blue);
-            }
-            n += 1;
-        }
+//     let mut n = offset;
+//     for i in 0..272 {
+//         for j in 0..60 {
+//             if source[n] % 2 == 0 {
+//                 layer.print_point_color_at(8*j+7, 271-i, blue);
+//             }
+//             if (source[n]/2) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+6, 271-i, blue);
+//             }
+//             if (source[n]/4) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+5, 271-i, blue);
+//             }
+//             if (source[n]/8) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+4, 271-i, blue);
+//             }
+//             if (source[n]/16) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+3, 271-i, blue);
+//             }
+//             if (source[n]/32) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+2, 271-i, blue);
+//             }
+//             if (source[n]/64) % 2 == 0 {
+//                 layer.print_point_color_at(8*j+1, 271-i, blue);
+//             }
+//             if (source[n]/128) % 2 == 0 {
+//                 layer.print_point_color_at(8*j,   271-i, blue);
+//             }
+//             n += 1;
+//         }
         
-    }
-}
+//     }
+// }
 
 fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
     let black = Color{red: 0, green: 0, blue: 0, alpha:255};

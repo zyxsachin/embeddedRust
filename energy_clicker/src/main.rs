@@ -151,6 +151,19 @@ fn main() -> ! {
     let mut emissions: usize = 0;
     let max_emissions: usize = 450;
 
+    loop {
+        draw::write_string(&mut layer_2, 20, 100, format_args!("Energy Clicker"));
+        draw::write_string(&mut layer_2, 20, 120, format_args!("Touch the screen to start the game"));
+
+        draw::write_string(&mut layer_2, 20, 200, format_args!("No animals were harmed in the making of this game"));
+        draw::write_string(&mut layer_2, 20, 220, format_args!("Any resemblance to actual persons, living or dead, is"));
+        draw::write_string(&mut layer_2, 20, 230, format_args!("purely coincidental"));
+        
+        if touch::touches(&mut i2c_3).unwrap().len() >= 1 {
+            break;
+        }
+    }
+
     draw::draw_emissions(&mut layer_1, emissions, max_emissions);
     draw::draw_mode0(&mut layer_1, &mut layer_2, max_emissions);
    
@@ -588,7 +601,9 @@ fn SysTick() {
 // define what happens in an Out Of Memory (OOM) condition
 #[alloc_error_handler]
 fn rust_oom(_: AllocLayout) -> ! {
-    loop {}
+    loop {
+        panic!();
+    }
 }
 
 #[panic_handler]
@@ -604,5 +619,7 @@ fn panic(info: &PanicInfo) -> ! {
     // OK to fire a breakpoint here because we know the microcontroller is connected to a debugger
     asm::bkpt();
 
-    loop {}
+    loop {
+        panic!();
+    }
 }

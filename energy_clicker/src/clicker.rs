@@ -14,9 +14,9 @@ pub struct Clicker {
     infrastructure: infrastructure::Infrastructure,
     carbon_dioxide: carbon_dioxide::Carbondioxide,
     hidden: bool,
-    energy_demand: u32,
-    new_energy_demand: u32,
-    second_new_energy_demand: u32,
+    // energy_demand: u32,
+    // new_energy_demand: u32,
+    // second_new_energy_demand: u32,
 }
 
     // let mut joule: u32 = 0;
@@ -47,9 +47,9 @@ impl Clicker {
             infrastructure: is,
             carbon_dioxide: co,
             hidden: true,
-            energy_demand: 0,
-            new_energy_demand: 1,
-            second_new_energy_demand: 1,
+            // energy_demand: 0,
+            // new_energy_demand: 1,
+            // second_new_energy_demand: 1,
         }
     }
 
@@ -66,9 +66,9 @@ impl Clicker {
         true
     }
 
-    pub fn get_demand(&mut self) -> u32 {
-        self.energy_demand
-    }
+    // pub fn get_demand(&mut self) -> u32 {
+    //     self.energy_demand
+    // }
 
     pub fn cheat(&mut self) {
         self.joule += 100_000;
@@ -84,18 +84,18 @@ impl Clicker {
         self.clicked = true;
     }
 
-    pub fn increase_demand(&mut self) {        
-        let temp = self.energy_demand;
-        self.energy_demand = self.new_energy_demand + self.second_new_energy_demand;
-        self.new_energy_demand = self.second_new_energy_demand;
-        self.second_new_energy_demand = temp;
+    // pub fn increase_demand(&mut self) {        
+    //     let temp = self.energy_demand;
+    //     self.energy_demand = self.new_energy_demand + self.second_new_energy_demand;
+    //     self.new_energy_demand = self.second_new_energy_demand;
+    //     self.second_new_energy_demand = temp;
 
-    }
+    // }
 
-    pub fn reset_demand(&mut self) {
-        self.energy_demand = 1;
-        self.new_energy_demand = 1;
-    }
+    // pub fn reset_demand(&mut self) {
+    //     self.energy_demand = 1;
+    //     self.new_energy_demand = 1;
+    // }
 
     pub fn get_hidden(&mut self) -> bool {
         self.hidden
@@ -377,22 +377,21 @@ impl Clicker {
         (false, 2)
     }
 
-    pub fn check_mode4_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
+    // pub fn check_mode4_clicked(&mut self, touch: (u16, u16)) -> (bool, i8) {
 
+    //     //todo change
+    //     let mode4_return_x = 0;
+    //     let mode4_return_y = 0;
 
-        //todo change
-        let mode4_return_x = 0;
-        let mode4_return_y = 0;
-
-        let mode4_return_width = 100;
-        let mode4_return_height = 272;
+    //     let mode4_return_width = 100;
+    //     let mode4_return_height = 272;
         
-        if !self.clicked &&  touch.0 > mode4_return_x && touch.0 < mode4_return_x + mode4_return_width 
-                && touch.1 > mode4_return_y && touch.1 < mode4_return_y + mode4_return_height {
-            return (true, 0);  
-        }
-        (false, 4)        
-    }
+    //     if !self.clicked &&  touch.0 > mode4_return_x && touch.0 < mode4_return_x + mode4_return_width 
+    //             && touch.1 > mode4_return_y && touch.1 < mode4_return_y + mode4_return_height {
+    //         return (true, 0);  
+    //     }
+    //     (false, 4)        
+    // }
 
     pub fn update_watt(&mut self) {
         self.watt = self.powerplant.get_watt()
@@ -475,9 +474,9 @@ impl Clicker {
         &mut self.powerplant
     }
 
-    pub fn get_carbon_dioxide(&mut self) -> &mut carbon_dioxide::Carbondioxide {
-        &mut self.carbon_dioxide
-    }
+    // pub fn get_carbon_dioxide(&mut self) -> &mut carbon_dioxide::Carbondioxide {
+    //     &mut self.carbon_dioxide
+    // }
 }
 
 fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {

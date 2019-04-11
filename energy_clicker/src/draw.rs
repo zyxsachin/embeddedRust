@@ -17,12 +17,12 @@ use crate::bmp_reader;
 
 // static blue: Color = Color{red: 0,green: 0 ,blue: 255,alpha: 255};
 // static green: Color = Color{red: 0,green: 255 ,blue: 0,alpha: 255};
-static BLACK: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
+// static BLACK: Color = Color{red: 0,green: 0 ,blue: 0,alpha: 255};
 static WHITE: Color = Color{red: 255,green: 255 ,blue: 255,alpha: 255};
 // static grey: Color = Color{red: 127,green: 127 ,blue: 127,alpha: 127};
-static YELLOW: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
+// static YELLOW: Color = Color{red: 255, green: 255, blue: 0, alpha: 255};
 static RED: Color = Color{red: 255, green: 0, blue: 0, alpha: 255};
-static SKY_BLUE: Color = Color{red: 51, green: 204, blue: 255, alpha:255};
+// static SKY_BLUE: Color = Color{red: 51, green: 204, blue: 255, alpha:255};
 
 
 // pub struct Drawer {
@@ -55,15 +55,15 @@ static SKY_BLUE: Color = Color{red: 51, green: 204, blue: 255, alpha:255};
 
 // }
 
-pub fn draw_circle(layer: &mut Layer<FramebufferArgb8888>, centre_x: usize, centre_y: usize, radius: usize, color: Color) {
-    for x in centre_x-radius..centre_x+radius {
-        for y in centre_y-radius..centre_y+radius {
-            if dist(x, y, centre_x, centre_y) == radius {
-                layer.print_point_color_at(x, y, color);
-            }
-        }
-    }
-}
+// pub fn draw_circle(layer: &mut Layer<FramebufferArgb8888>, centre_x: usize, centre_y: usize, radius: usize, color: Color) {
+//     for x in centre_x-radius..centre_x+radius {
+//         for y in centre_y-radius..centre_y+radius {
+//             if dist(x, y, centre_x, centre_y) == radius {
+//                 layer.print_point_color_at(x, y, color);
+//             }
+//         }
+//     }
+// }
 
 pub fn draw_rectangle(layer: &mut Layer<FramebufferArgb8888>, x_coord: usize, y_coord: usize, x_length: usize, y_length: usize, color: Color) {
     let x_limit = x_coord + x_length + 1;
@@ -116,36 +116,36 @@ pub fn write_string(layer: &mut Layer<FramebufferAl88>, x_coord: u32, y_coord: u
      let mut text_layer = layer.text_writer();
      text_layer.x_pos = x_coord as usize;
      text_layer.y_pos = y_coord as usize;
-     text_layer.write_fmt(text);
+     text_layer.write_fmt(text).unwrap();
 
 }
 
 
-fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
-    let d_x;
-    let d_y;
-    if px > qx {
-        d_x = px - qx;
-    }
-    else {
-        d_x = qx - px;
-    }
-    if py > qy {
-        d_y = py - qy; 
-    }
-    else {
-        d_y = qy - py;
-    }
-    let t = d_x * d_x + d_y * d_y;
-    //my_sqrt(t)
-    for i in 0..t {
-        if i * i >= t {
-            return i;
-        }
+// fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
+//     let d_x;
+//     let d_y;
+//     if px > qx {
+//         d_x = px - qx;
+//     }
+//     else {
+//         d_x = qx - px;
+//     }
+//     if py > qy {
+//         d_y = py - qy; 
+//     }
+//     else {
+//         d_y = qy - py;
+//     }
+//     let t = d_x * d_x + d_y * d_y;
+//     //my_sqrt(t)
+//     for i in 0..t {
+//         if i * i >= t {
+//             return i;
+//         }
             
-    } 
-    0
-}
+//     } 
+//     0
+// }
 
 pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emissions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
@@ -155,11 +155,11 @@ pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: u
 
 
 pub fn draw_mode0(mut layer_1: &mut Layer<FramebufferArgb8888>, layer_2: &mut Layer<FramebufferAl88>, emissions: usize) {
-    let max_x = 480;
-    let max_y = 272;
-    let centre_x = max_x / 2;
-    let centre_y = max_y / 2;
-    let radius = 50;
+    // let max_x = 480;
+    // let max_y = 272;
+    // let centre_x = max_x / 2;
+    // let centre_y = max_y / 2;
+    // let radius = 50;
 
     layer_1.clear();
     layer_2.clear();   

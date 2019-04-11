@@ -186,10 +186,10 @@ impl Powerplant {
         (360, 135)
     }
     
-    pub fn reset_hydro(&mut self) {
-        self.hydro.0 = 100_000;
-        self.hydro.1 = 0;
-    }
+    // pub fn reset_hydro(&mut self) {
+    //     self.hydro.0 = 100_000;
+    //     self.hydro.1 = 0;
+    // }
 
     pub fn add_bonus_emissions(&mut self, num: u32) {
         self.bonus_emissions += num;
