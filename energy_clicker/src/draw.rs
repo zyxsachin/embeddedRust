@@ -150,7 +150,7 @@ fn dist (px : usize, py : usize, qx : usize, qy : usize) -> usize {
 pub fn draw_emissions(mut layer_1: &mut Layer<FramebufferArgb8888>, emissions: usize, max_emissions : usize) {
     color_rectangle(&mut layer_1, 10, 10, emissions, 20, RED);
     color_rectangle(&mut layer_1, 10 + emissions, 10, max_emissions - emissions, 20, WHITE);
-
+    bmp_reader::draw_co2_text(layer_1, 220, 11, emissions);
 }
 
 

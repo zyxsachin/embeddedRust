@@ -42,6 +42,7 @@ static QMARK: &[u8] = include_bytes!("../images/questionmark.bmp");
 static SLASHBURN: &[u8] = include_bytes!("../images/slashburn.bmp");
 static SUN: &[u8] = include_bytes!("../images/sun2.bmp");  
 static WHALE: &[u8] = include_bytes!("../images/whale.bmp"); 
+static CO2: &[u8] = include_bytes!("../images/co.bmp"); 
 
 fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
     let w = source[18] as usize + 256 * source[19] as usize;
@@ -157,6 +158,26 @@ fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
                 layer.print_point_color_at(i - 1, j, white);
                 layer.print_point_color_at(i, j - 1, white);
             } 
+        }
+    }
+}
+
+pub fn draw_co2_text(layer: &mut Layer<FramebufferArgb8888>, pos_x : usize, pos_y : usize, emission : usize) {
+    let red = Color{red: 255, green: 0, blue: 0, alpha:255};
+    let white = Color{red: 255, green: 255, blue: 255, alpha:255};
+    let source = CO2;
+    let w = source[18] as usize + 256 * source[19] as usize;
+    let h = source[22] as usize + 256 * source[23] as usize;
+    let offset = source[10] as usize;    
+     for i in 0..h {
+        for j in 0..w { 
+            let col = Color{blue: source[3 * (j+(h-i-1)*w) + offset], green: source[3 * (j+(h-i-1)*w) + offset + 1], red: source[3 * (j+(h-i-1)*w) + offset + 2], alpha: 255};
+            if col.red != 255 && col.green != 255 && col.blue != 255 {
+                layer.print_point_color_at(j + pos_x, i + pos_y, red);
+                if emission > j + pos_x - 10 {
+                    layer.print_point_color_at(j + pos_x, i + pos_y, white);
+                }
+            }
         }
     }
 }
