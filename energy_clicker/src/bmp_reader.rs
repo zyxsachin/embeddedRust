@@ -42,6 +42,7 @@ static QMARK: &[u8] = include_bytes!("../images/questionmark.bmp");
 static SLASHBURN: &[u8] = include_bytes!("../images/slashburn.bmp");
 static SUN: &[u8] = include_bytes!("../images/sun2.bmp");  
 static WHALE: &[u8] = include_bytes!("../images/whale.bmp"); 
+static CO2: &[u8] = include_bytes!("../images/co.bmp"); 
 
 fn read_bmp(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
     let w = source[18] as usize + 256 * source[19] as usize;
@@ -161,6 +162,20 @@ fn draw_back_button (layer: &mut Layer<FramebufferArgb8888>) {
     }
 }
 
+fn draw_transparent(layer: &mut Layer<FramebufferArgb8888>, source : &[u8], pos_x : usize, pos_y : usize) {
+    let w = source[18] as usize + 256 * source[19] as usize;
+    let h = source[22] as usize + 256 * source[23] as usize;
+    let offset = source[10] as usize;    
+     for i in 0..h {
+        for j in 0..w { 
+            let col = Color{blue: source[3 * (j+(h-i-1)*w) + offset], green: source[3 * (j+(h-i-1)*w) + offset + 1], red: source[3 * (j+(h-i-1)*w) + offset + 2], alpha: 255};
+            if col.red != 255 && col.green != 255 && col.blue != 255 {
+                layer.print_point_color_at(j + pos_x, i + pos_y, col);
+            }
+        }
+    }
+}
+
 
 
 pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usize, y_pos: usize) {
@@ -250,5 +265,8 @@ pub fn draw_image(layer: &mut Layer<FramebufferArgb8888>, img: &str, x_pos: usiz
     // }
     if img == "questionmark" {
         read_bmp(layer, QMARK, x_pos, y_pos);
+    }
+    if img == "co2" {
+        draw_transparent(layer, CO2, x_pos, y_pos);
     }
 }
